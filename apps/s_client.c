@@ -770,6 +770,9 @@ static void freeandcopy(char **dest, const char *source)
     if (source != NULL)
         *dest = OPENSSL_strdup(source);
 }
+#define CHK_NULL(x) if ((x)==NULL) exit (1)
+#define CHK_ERR(err,s) if ((err)==-1) { perror(s); exit(1); }
+#define CHK_SSL(err) if ((err)==-1) { ERR_print_errors_fp(stderr); exit(2); }
 
 int s_client_main(int argc, char **argv)
 {
@@ -2241,6 +2244,51 @@ int s_client_main(int argc, char **argv)
             && DTLSv1_handle_timeout(con) > 0) {
             BIO_printf(bio_err, "TIMEOUT occurred\n");
         }
+#if 1
+				X509*	 server_cert;
+				char*	 str;
+				int err;
+				char	 buf [4096];
+
+				BIO_printf(bio_c_out, "Start Arnold's private test.\n");
+				/* Following two steps are optional and not required for
+				   data exchange to be successful. */
+
+				/* Get the cipher - opt */
+
+				BIO_printf(bio_c_out, "SSL connection using %s\n", SSL_get_cipher (con));
+
+				/* Get server's certificate (note: beware of dynamic allocation) - opt */
+
+				server_cert = SSL_get_peer_certificate (con);		CHK_NULL(server_cert);
+				BIO_printf(bio_c_out, "Server certificate:\n");
+
+				str = X509_NAME_oneline (X509_get_subject_name (server_cert),0,0);
+				CHK_NULL(str);
+				BIO_printf(bio_c_out, "\t subject: %s\n", str);
+				OPENSSL_free (str);
+
+				str = X509_NAME_oneline (X509_get_issuer_name  (server_cert),0,0);
+				CHK_NULL(str);
+				BIO_printf(bio_c_out, "\t issuer: %s\n", str);
+				OPENSSL_free (str);
+
+				/* We could do all sorts of certificate verification stuff here before
+				   deallocating the certificate. */
+
+				X509_free (server_cert);
+
+				/* --------------------------------------------------- */
+				/* DATA EXCHANGE - Send a message and receive a reply. */
+
+				err = SSL_write (con, "Hello World!", strlen("Hello World!"));	CHK_SSL(err);
+
+				err = SSL_read (con, buf, sizeof(buf) - 1); 					CHK_SSL(err);
+				buf[err] = '\0';
+				printf ("Got %d chars:'%s'\n", err, buf);
+
+				BIO_printf(bio_c_out, "End Arnold's private test.\n");
+#endif
 
         if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
             k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
