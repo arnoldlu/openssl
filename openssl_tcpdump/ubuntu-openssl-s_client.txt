@@ -1,0 +1,101 @@
+./openssl s_client -connect www.baidu.com:443 -proxy proxynj.zte.com.cn:80
+CONNECTED(00000003)
+depth=2 C = US, O = "VeriSign, Inc.", OU = VeriSign Trust Network, OU = "(c) 2006 VeriSign, Inc. - For authorized use only", CN = VeriSign Class 3 Public Primary Certification Authority - G5
+verify error:num=20:unable to get local issuer certificate
+---
+Certificate chain
+ 0 s:/C=CN/ST=beijing/L=beijing/O=BeiJing Baidu Netcom Science Technology Co., Ltd/OU=service operation department./CN=baidu.com
+   i:/C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+ 1 s:/C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+   i:/C=US/O=VeriSign, Inc./OU=VeriSign Trust Network/OU=(c) 2006 VeriSign, Inc. - For authorized use only/CN=VeriSign Class 3 Public Primary Certification Authority - G5
+ 2 s:/C=US/O=VeriSign, Inc./OU=VeriSign Trust Network/OU=(c) 2006 VeriSign, Inc. - For authorized use only/CN=VeriSign Class 3 Public Primary Certification Authority - G5
+   i:/C=US/O=VeriSign, Inc./OU=Class 3 Public Primary Certification Authority
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIHOjCCBiKgAwIBAgIPAaAMWZKgoUJvdRQzvVy/MA0GCSqGSIb3DQEBCwUAMH4x
+CzAJBgNVBAYTAlVTMR0wGwYDVQQKExRTeW1hbnRlYyBDb3Jwb3JhdGlvbjEfMB0G
+A1UECxMWU3ltYW50ZWMgVHJ1c3QgTmV0d29yazEvMC0GA1UEAxMmU3ltYW50ZWMg
+Q2xhc3MgMyBTZWN1cmUgU2VydmVyIENBIC0gRzQwHhcNMTYwODE1MDAwMDAwWhcN
+MTcwODE2MjM1OTU5WjCBqDELMAkGA1UEBhMCQ04xEDAOBgNVBAgMB2JlaWppbmcx
+EDAOBgNVBAcMB2JlaWppbmcxOTA3BgNVBAoMMEJlaUppbmcgQmFpZHUgTmV0Y29t
+IFNjaWVuY2UgVGVjaG5vbG9neSBDby4sIEx0ZDEmMCQGA1UECwwdc2VydmljZSBv
+cGVyYXRpb24gZGVwYXJ0bWVudC4xEjAQBgNVBAMMCWJhaWR1LmNvbTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBAMsV6Ty0lfOjGN04Pmd8m0OuU0aWrFnm
+KqsvkcxEtFfT9lgyhrZe3Tbyq7xjMsNluuJFeRlvxgszGgS/LNxfpkaY6sg67R/t
+vaxB8LmuIJn9e7RI3dZUoyZDTBFWTovVsdoOlnF00YRRKN9tbKo1rK4rzux+gqRt
+f4Hsk+mjTBhPkY0J/4qocUGeGYxPjHlPIJABBN5UttUv3Be10fhUzP1OHHyj+iYq
+K/PsMIo+PoZclb0ox1K4Vvg3czjy8BAF76sw+mqr/w/v16WemjFADyIqoUXuBQyh
+p3h4FmgmiXSRJeJ8ik9tzzjdIb0KhrRbdjQJyA4pDujYKk2g+4Ht2R0CAwEAAaOC
+A4gwggOEMIIBMwYDVR0RBIIBKjCCASaCCyouYmFpZHUuY29tgg4qLmJhaWZ1YmFv
+LmNvbYIOKi5iZHN0YXRpYy5jb22CDCouaGFvMTIzLmNvbYILKi5udW9taS5jb22C
+DyouYmNlLmJhaWR1LmNvbYIQKi5leXVuLmJhaWR1LmNvbYIPKi5tYXAuYmFpZHUu
+Y29tggliYWlkdS5jb22CDGJhaWZ1YmFvLmNvbYIMd3d3LmJhaWR1LmNughB3d3cu
+YmFpZHUuY29tLmNughJjbGljay5obS5iYWlkdS5jb22CEGxvZy5obS5iYWlkdS5j
+b22CEGNtLnBvcy5iYWlkdS5jb22CEHduLnBvcy5iYWlkdS5jb22CFHVwZGF0ZS5w
+YW4uYmFpZHUuY29tgg9tY3QueS5udW9taS5jb20wCQYDVR0TBAIwADAOBgNVHQ8B
+Af8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMGEGA1UdIARa
+MFgwVgYGZ4EMAQICMEwwIwYIKwYBBQUHAgEWF2h0dHBzOi8vZC5zeW1jYi5jb20v
+Y3BzMCUGCCsGAQUFBwICMBkMF2h0dHBzOi8vZC5zeW1jYi5jb20vcnBhMB8GA1Ud
+IwQYMBaAFF9gz2GQVd+EQxSKYCqy9Xr0QxjvMCsGA1UdHwQkMCIwIKAeoByGGmh0
+dHA6Ly9zcy5zeW1jYi5jb20vc3MuY3JsMFcGCCsGAQUFBwEBBEswSTAfBggrBgEF
+BQcwAYYTaHR0cDovL3NzLnN5bWNkLmNvbTAmBggrBgEFBQcwAoYaaHR0cDovL3Nz
+LnN5bWNiLmNvbS9zcy5jcnQwggEFBgorBgEEAdZ5AgQCBIH2BIHzAPEAdwDd6x0r
+eg1PpiCLga2BaHB+Lo6dAdVciI09EcTNtuy+zAAAAVaQfkc6AAAEAwBIMEYCIQCT
+LTzo3DYr1v3qgw30B/37GzgST+iXqZtWj1FjVrawzQIhAMxUeruo6bLLmlqsE4hW
+YcDOu8hivJK4TefT1NDhb07DAHYApLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fN
+DsgN3BAAAAFWkH5HWgAABAMARzBFAiAfRCG9WGKLQhLcPg5Dv+8MqUslHec5awM8
+ahTB4Y0ddwIhAIzuy0JBUsTmk+Eg5ArobPqgXYFc1llXRceY4uTZiASZMA0GCSqG
+SIb3DQEBCwUAA4IBAQBBLDatqFCdrwIrDoenQ7eCPpp1H0G9BvHI+5JAXQiI6Und
+iSkaq7A9WvgAsVGNw1wGZIjysBQaf2VhJpbSFZwz9D9t3pmTAApVSY0uUvqiFg7X
+NqDoqu3iyBBNw5hGzP/AzU2RoT1Sd7bf57xBEW5W1nxogMSE1ACNf/8WZwixZk5t
+5RcW6zvGQiJ8+3OA+NA8tyUcGj1mhDBb7Z4yjbn8cily5DA34nXpiYXnHGic5TLn
+QkaFIbZ9z7GqroE8oLrTUhOy+ZFNsrwanNO+gqf6c59V+1hQzRvkKN24JzdWjwHx
+jsl/tY61DHvNFsmc683ggLjI+ZWMya1UcDmxADhN
+-----END CERTIFICATE-----
+subject=/C=CN/ST=beijing/L=beijing/O=BeiJing Baidu Netcom Science Technology Co., Ltd/OU=service operation department./CN=baidu.com
+issuer=/C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+---
+No client certificate CA names sent
+Peer signing digest: SHA512
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 5129 bytes and written 340 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.2, Cipher is ECDHE-RSA-AES128-GCM-SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES128-GCM-SHA256
+    Session-ID: ACD24BB0A07166A975EEF170F32A1DC066F701020A8BB603F717E61C62155743
+    Session-ID-ctx: 
+    Master-Key: A1504C789ABDAA1EE355D3DBB498BC0EC498E49AEC07A0D646B81A82DF1BC6523A52E553CE9B10E7380A33B61D2ED399
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 72000 (seconds)
+    TLS session ticket:
+    0000 - 79 1b 78 aa 71 3a 95 f6-46 25 8b 1a bc 60 0a 25   y.x.q:..F%...`.%
+    0010 - df 2e ec 18 7d 17 02 59-1f 4c 39 1a b9 dc b5 8f   ....}..Y.L9.....
+    0020 - aa da 52 b9 bb 0e 72 56-d3 0f 28 81 39 ac 06 14   ..R...rV..(.9...
+    0030 - 64 d1 15 01 81 6c 01 96-fa 10 97 51 52 13 70 d4   d....l.....QR.p.
+    0040 - d7 73 23 3e 23 e2 46 4e-2d ec fe f3 57 5a ab d9   .s#>#.FN-...WZ..
+    0050 - 06 bb ac 93 90 4c 11 d5-50 ce b3 8c 8c 93 a5 5f   .....L..P......_
+    0060 - 33 e8 1f b6 25 ce fc 7d-67 bf 25 49 e0 9e 8e 06   3...%..}g.%I....
+    0070 - 72 93 85 d6 17 a1 b7 cf-41 4b 40 b2 c2 61 4b 7f   r.......AK@..aK.
+    0080 - 43 a1 a4 81 61 60 2c 5e-03 a7 90 bc ed 6f f8 6d   C...a`,^.....o.m
+    0090 - f0 e8 fc fc 8e 0d c0 c4-89 1f af 1f 45 9b bd 91   ............E...
+
+    Start Time: 1486514931
+    Timeout   : 7200 (sec)
+    Verify return code: 20 (unable to get local issuer certificate)
+    Extended master secret: no
+---
+
+closed
+
