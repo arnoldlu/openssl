@@ -61,6 +61,7 @@ extern int req_main(int argc, char *argv[]);
 extern int rsa_main(int argc, char *argv[]);
 extern int rsautl_main(int argc, char *argv[]);
 extern int s_client_main(int argc, char *argv[]);
+extern int s_k312_main(int argc, char *argv[]);
 extern int s_server_main(int argc, char *argv[]);
 extern int s_time_main(int argc, char *argv[]);
 extern int sess_id_main(int argc, char *argv[]);
@@ -110,6 +111,7 @@ extern OPTIONS req_options[];
 extern OPTIONS rsa_options[];
 extern OPTIONS rsautl_options[];
 extern OPTIONS s_client_options[];
+extern OPTIONS s_k312_options[];
 extern OPTIONS s_server_options[];
 extern OPTIONS s_time_options[];
 extern OPTIONS sess_id_options[];
@@ -188,6 +190,7 @@ static FUNCTION functions[] = {
 #endif
 #ifndef OPENSSL_NO_SOCK
     { FT_general, "s_client", s_client_main, s_client_options },
+    { FT_general, "s_k312", s_k312_main, s_k312_options },
 #endif
 #ifndef OPENSSL_NO_SOCK
     { FT_general, "s_server", s_server_main, s_server_options },
