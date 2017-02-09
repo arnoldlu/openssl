@@ -231,6 +231,7 @@ static long ssl_ctrl(BIO *b, int cmd, long num, void *ptr)
     long ret = 1;
     BIO *next;
 
+printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     bs = BIO_get_data(b);
     next = BIO_next(b);
     ssl = bs->ssl;

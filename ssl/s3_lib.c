@@ -3815,6 +3815,7 @@ int ssl3_shutdown(SSL *s)
 
 int ssl3_write(SSL *s, const void *buf, int len)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     clear_sys_error();
     if (s->s3->renegotiate)
         ssl3_renegotiate_check(s);
@@ -3826,6 +3827,7 @@ static int ssl3_read_internal(SSL *s, void *buf, int len, int peek)
 {
     int ret;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     clear_sys_error();
     if (s->s3->renegotiate)
         ssl3_renegotiate_check(s);
@@ -3854,6 +3856,7 @@ static int ssl3_read_internal(SSL *s, void *buf, int len, int peek)
 
 int ssl3_read(SSL *s, void *buf, int len)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return ssl3_read_internal(s, buf, len, 0);
 }
 

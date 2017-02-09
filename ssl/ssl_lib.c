@@ -1528,6 +1528,7 @@ static int ssl_io_intern(void *vargs)
 
 int SSL_read(SSL *s, void *buf, int num)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (s->handshake_func == NULL) {
         SSLerr(SSL_F_SSL_READ, SSL_R_UNINITIALIZED);
         return -1;
@@ -1539,6 +1540,7 @@ int SSL_read(SSL *s, void *buf, int num)
     }
 
     if ((s->mode & SSL_MODE_ASYNC) && ASYNC_get_current_job() == NULL) {
+		printf("@@@@@ %s line=%d\n", __func__, __LINE__);
         struct ssl_async_args args;
 
         args.s = s;
@@ -1549,6 +1551,7 @@ int SSL_read(SSL *s, void *buf, int num)
 
         return ssl_start_async_job(s, &args, ssl_io_intern);
     } else {
+		printf("@@@@@ %s line=%d\n", __func__, __LINE__);
         return s->method->ssl_read(s, buf, num);
     }
 }
@@ -1580,6 +1583,7 @@ int SSL_peek(SSL *s, void *buf, int num)
 
 int SSL_write(SSL *s, const void *buf, int num)
 {
+	printf("@@@@@ %s line=%d buf=%s\n", __func__, __LINE__, buf);
     if (s->handshake_func == NULL) {
         SSLerr(SSL_F_SSL_WRITE, SSL_R_UNINITIALIZED);
         return -1;
@@ -1592,6 +1596,7 @@ int SSL_write(SSL *s, const void *buf, int num)
     }
 
     if ((s->mode & SSL_MODE_ASYNC) && ASYNC_get_current_job() == NULL) {
+		printf("@@@@@ %s line=%d\n", __func__, __LINE__);
         struct ssl_async_args args;
 
         args.s = s;
@@ -1602,6 +1607,7 @@ int SSL_write(SSL *s, const void *buf, int num)
 
         return ssl_start_async_job(s, &args, ssl_io_intern);
     } else {
+		printf("@@@@@ %s line=%d\n", __func__, __LINE__);
         return s->method->ssl_write(s, buf, num);
     }
 }
@@ -3007,6 +3013,7 @@ int SSL_do_handshake(SSL *s)
 {
     int ret = 1;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (s->handshake_func == NULL) {
         SSLerr(SSL_F_SSL_DO_HANDSHAKE, SSL_R_CONNECTION_TYPE_NOT_SET);
         return -1;

@@ -167,11 +167,13 @@ void ossl_statem_set_hello_verify_done(SSL *s)
 
 int ossl_statem_connect(SSL *s)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return state_machine(s, 0);
 }
 
 int ossl_statem_accept(SSL *s)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return state_machine(s, 1);
 }
 
@@ -224,6 +226,7 @@ static int state_machine(SSL *s, int server)
     int ret = -1;
     int ssret;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (st->state == MSG_FLOW_ERROR) {
         /* Shouldn't have been called if we're already in the error state */
         return -1;
@@ -500,6 +503,7 @@ static SUB_STATE_RETURN read_state_machine(SSL *s)
     unsigned long (*max_message_size) (SSL *s);
     void (*cb) (const SSL *ssl, int type, int val) = NULL;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     cb = get_callback(s);
 
     if (s->server) {
@@ -649,6 +653,7 @@ static int statem_do_write(SSL *s)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (st->hand_state == TLS_ST_CW_CHANGE
         || st->hand_state == TLS_ST_SW_CHANGE) {
         if (SSL_IS_DTLS(s))
@@ -711,6 +716,7 @@ static SUB_STATE_RETURN write_state_machine(SSL *s)
     int (*construct_message) (SSL *s);
     void (*cb) (const SSL *ssl, int type, int val) = NULL;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     cb = get_callback(s);
 
     if (s->server) {

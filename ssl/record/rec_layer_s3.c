@@ -339,6 +339,7 @@ int ssl3_write_bytes(SSL *s, int type, const void *buf_, int len)
     SSL3_BUFFER *wb = &s->rlayer.wbuf[0];
     int i;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (len < 0) {
         SSLerr(SSL_F_SSL3_WRITE_BYTES, SSL_R_SSL_NEGATIVE_LENGTH);
         return -1;
@@ -625,6 +626,7 @@ int do_ssl3_write(SSL *s, int type, const unsigned char *buf,
     unsigned int totlen = 0;
     unsigned int j;
 
+	printf("@@@@@ %s line=%d buf=%s\n", __func__, __LINE__, buf);
     for (j = 0; j < numpipes; j++)
         totlen += pipelens[j];
     /*
@@ -967,6 +969,7 @@ int ssl3_read_bytes(SSL *s, int type, int *recvd_type, unsigned char *buf,
     SSL3_BUFFER *rbuf;
     void (*cb) (const SSL *ssl, int type2, int val) = NULL;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     rbuf = &s->rlayer.rbuf;
 
     if (!SSL3_BUFFER_is_initialised(rbuf)) {

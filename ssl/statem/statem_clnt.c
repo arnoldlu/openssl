@@ -121,6 +121,7 @@ int ossl_statem_client_read_transition(SSL *s, int mt)
     OSSL_STATEM *st = &s->statem;
     int ske_expected;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CW_CLNT_HELLO:
         if (mt == SSL3_MT_SERVER_HELLO) {
@@ -278,6 +279,7 @@ WRITE_TRAN ossl_statem_client_write_transition(SSL *s)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_OK:
         /* Renegotiation - fall through */
@@ -382,6 +384,7 @@ WORK_STATE ossl_statem_client_pre_work(SSL *s, WORK_STATE wst)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CW_CLNT_HELLO:
         s->shutdown = 0;
@@ -431,6 +434,7 @@ WORK_STATE ossl_statem_client_post_work(SSL *s, WORK_STATE wst)
 
     s->init_num = 0;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CW_CLNT_HELLO:
         if (wst == WORK_MORE_A && statem_flush(s) != 1)
@@ -514,6 +518,7 @@ int ossl_statem_client_construct_message(SSL *s)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CW_CLNT_HELLO:
         return tls_construct_client_hello(s);
@@ -560,6 +565,7 @@ unsigned long ossl_statem_client_max_message_size(SSL *s)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CR_SRVR_HELLO:
         return SERVER_HELLO_MAX_LENGTH;
@@ -613,6 +619,7 @@ MSG_PROCESS_RETURN ossl_statem_client_process_message(SSL *s, PACKET *pkt)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CR_SRVR_HELLO:
         return tls_process_server_hello(s, pkt);
@@ -660,6 +667,7 @@ WORK_STATE ossl_statem_client_post_process_message(SSL *s, WORK_STATE wst)
 {
     OSSL_STATEM *st = &s->statem;
 
+	printf("@@@@@ %s line=%d handshake state=%d\n", __func__, __LINE__, st->hand_state);
     switch (st->hand_state) {
     case TLS_ST_CR_CERT_REQ:
         return tls_prepare_client_certificate(s, wst);
