@@ -1,0 +1,519 @@
+verify depth is 2
+CAfile=<NULL>, CApath=<NULL>, noCAfile=0, noCApath=0
+CONNECTED(00000003)
+@@@@@ starttls_proto=8
+write to 0x1f54770 [0x1f55930] (38 bytes => 38 (0x26))
+0000 - 43 4f 4e 4e 45 43 54 20-77 77 77 2e 62 61 69 64   CONNECT www.baid
+0010 - 75 2e 63 6f 6d 3a 34 34-33 20 48 54 54 50 2f 31   u.com:443 HTTP/1
+0020 - 2e 30 0d 0a 0d 0a                                 .0....
+read from 0x1f54770 [0x1f54920] (4096 bytes => 39 (0x27))
+0000 - 48 54 54 50 2f 31 2e 30-20 32 30 30 20 43 6f 6e   HTTP/1.0 200 Con
+0010 - 6e 65 63 74 69 6f 6e 20-65 73 74 61 62 6c 69 73   nection establis
+0020 - 68 65 64 0d 0a 0d 0a                              hed....
+@@@@@ mbuf=HTTP/1.0 200 Connection established
+
+write to 0x1f54770 [0x1f630a0] (176 bytes => 176 (0xB0))
+0000 - 16 03 01 00 ab 01 00 00-a7 03 03 f7 65 42 b4 35   ............eB.5
+0010 - b9 33 cc 7f 08 4e c5 f2-69 26 0a ee 5d 8e 6e a5   .3...N..i&..].n.
+0020 - 02 cc f6 28 2b 0c ee cd-8a 63 3f 00 00 38 c0 2c   ...(+....c?..8.,
+0030 - c0 30 00 9f cc a9 cc a8-cc aa c0 2b c0 2f 00 9e   .0.........+./..
+0040 - c0 24 c0 28 00 6b c0 23-c0 27 00 67 c0 0a c0 14   .$.(.k.#.'.g....
+0050 - 00 39 c0 09 c0 13 00 33-00 9d 00 9c 00 3d 00 3c   .9.....3.....=.<
+0060 - 00 35 00 2f 00 ff 01 00-00 46 00 0b 00 04 03 00   .5./.....F......
+0070 - 01 02 00 0a 00 0a 00 08-00 1d 00 17 00 19 00 18   ................
+0080 - 00 23 00 00 00 0d 00 20-00 1e 06 01 06 02 06 03   .#..... ........
+0090 - 05 01 05 02 05 03 04 01-04 02 04 03 03 01 03 02   ................
+00a0 - 03 03 02 01 02 02 02 03-00 16 00 00 00 17         ..............
+00b0 - <SPACES/NULS>
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 16 03 03 00 3d                                    ....=
+read from 0x1f54770 [0x1f59e88] (61 bytes => 61 (0x3D))
+0000 - 02 00 00 39 03 03 17 05-6a 1e 16 72 bf 21 16 77   ...9....j..r.!.w
+0010 - 84 ff 25 55 e6 09 d4 73-55 f7 f1 a0 6c b8 3a e0   ..%U...sU...l.:.
+0020 - e2 d4 6a 48 38 2a 00 c0-2f 00 00 11 ff 01 00 01   ..jH8*../.......
+0030 - 00 00 0b 00 04 03 00 01-02 00 23                  ..........#
+003d - <SPACES/NULS>
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 16 03 03 11 5e                                    ....^
+read from 0x1f54770 [0x1f59e88] (4446 bytes => 1377 (0x561))
+0000 - 0b 00 11 5a 00 11 57 00-07 3e 30 82 07 3a 30 82   ...Z..W..>0..:0.
+0010 - 06 22 a0 03 02 01 02 02-0f 01 a0 0c 59 92 a0 a1   ."..........Y...
+0020 - 42 6f 75 14 33 bd 5c bf-30 0d 06 09 2a 86 48 86   Bou.3.\.0...*.H.
+0030 - f7 0d 01 01 0b 05 00 30-7e 31 0b 30 09 06 03 55   .......0~1.0...U
+0040 - 04 06 13 02 55 53 31 1d-30 1b 06 03 55 04 0a 13   ....US1.0...U...
+0050 - 14 53 79 6d 61 6e 74 65-63 20 43 6f 72 70 6f 72   .Symantec Corpor
+0060 - 61 74 69 6f 6e 31 1f 30-1d 06 03 55 04 0b 13 16   ation1.0...U....
+0070 - 53 79 6d 61 6e 74 65 63-20 54 72 75 73 74 20 4e   Symantec Trust N
+0080 - 65 74 77 6f 72 6b 31 2f-30 2d 06 03 55 04 03 13   etwork1/0-..U...
+0090 - 26 53 79 6d 61 6e 74 65-63 20 43 6c 61 73 73 20   &Symantec Class 
+00a0 - 33 20 53 65 63 75 72 65-20 53 65 72 76 65 72 20   3 Secure Server 
+00b0 - 43 41 20 2d 20 47 34 30-1e 17 0d 31 36 30 38 31   CA - G40...16081
+00c0 - 35 30 30 30 30 30 30 5a-17 0d 31 37 30 38 31 36   5000000Z..170816
+00d0 - 32 33 35 39 35 39 5a 30-81 a8 31 0b 30 09 06 03   235959Z0..1.0...
+00e0 - 55 04 06 13 02 43 4e 31-10 30 0e 06 03 55 04 08   U....CN1.0...U..
+00f0 - 0c 07 62 65 69 6a 69 6e-67 31 10 30 0e 06 03 55   ..beijing1.0...U
+0100 - 04 07 0c 07 62 65 69 6a-69 6e 67 31 39 30 37 06   ....beijing1907.
+0110 - 03 55 04 0a 0c 30 42 65-69 4a 69 6e 67 20 42 61   .U...0BeiJing Ba
+0120 - 69 64 75 20 4e 65 74 63-6f 6d 20 53 63 69 65 6e   idu Netcom Scien
+0130 - 63 65 20 54 65 63 68 6e-6f 6c 6f 67 79 20 43 6f   ce Technology Co
+0140 - 2e 2c 20 4c 74 64 31 26-30 24 06 03 55 04 0b 0c   ., Ltd1&0$..U...
+0150 - 1d 73 65 72 76 69 63 65-20 6f 70 65 72 61 74 69   .service operati
+0160 - 6f 6e 20 64 65 70 61 72-74 6d 65 6e 74 2e 31 12   on department.1.
+0170 - 30 10 06 03 55 04 03 0c-09 62 61 69 64 75 2e 63   0...U....baidu.c
+0180 - 6f 6d 30 82 01 22 30 0d-06 09 2a 86 48 86 f7 0d   om0.."0...*.H...
+0190 - 01 01 01 05 00 03 82 01-0f 00 30 82 01 0a 02 82   ..........0.....
+01a0 - 01 01 00 cb 15 e9 3c b4-95 f3 a3 18 dd 38 3e 67   ......<......8>g
+01b0 - 7c 9b 43 ae 53 46 96 ac-59 e6 2a ab 2f 91 cc 44   |.C.SF..Y.*./..D
+01c0 - b4 57 d3 f6 58 32 86 b6-5e dd 36 f2 ab bc 63 32   .W..X2..^.6...c2
+01d0 - c3 65 ba e2 45 79 19 6f-c6 0b 33 1a 04 bf 2c dc   .e..Ey.o..3...,.
+01e0 - 5f a6 46 98 ea c8 3a ed-1f ed bd ac 41 f0 b9 ae   _.F...:.....A...
+01f0 - 20 99 fd 7b b4 48 dd d6-54 a3 26 43 4c 11 56 4e    ..{.H..T.&CL.VN
+0200 - 8b d5 b1 da 0e 96 71 74-d1 84 51 28 df 6d 6c aa   ......qt..Q(.ml.
+0210 - 35 ac ae 2b ce ec 7e 82-a4 6d 7f 81 ec 93 e9 a3   5..+..~..m......
+0220 - 4c 18 4f 91 8d 09 ff 8a-a8 71 41 9e 19 8c 4f 8c   L.O......qA...O.
+0230 - 79 4f 20 90 01 04 de 54-b6 d5 2f dc 17 b5 d1 f8   yO ....T../.....
+0240 - 54 cc fd 4e 1c 7c a3 fa-26 2a 2b f3 ec 30 8a 3e   T..N.|..&*+..0.>
+0250 - 3e 86 5c 95 bd 28 c7 52-b8 56 f8 37 73 38 f2 f0   >.\..(.R.V.7s8..
+0260 - 10 05 ef ab 30 fa 6a ab-ff 0f ef d7 a5 9e 9a 31   ....0.j........1
+0270 - 40 0f 22 2a a1 45 ee 05-0c a1 a7 78 78 16 68 26   @."*.E.....xx.h&
+0280 - 89 74 91 25 e2 7c 8a 4f-6d cf 38 dd 21 bd 0a 86   .t.%.|.Om.8.!...
+0290 - b4 5b 76 34 09 c8 0e 29-0e e8 d8 2a 4d a0 fb 81   .[v4...)...*M...
+02a0 - ed d9 1d 02 03 01 00 01-a3 82 03 88 30 82 03 84   ............0...
+02b0 - 30 82 01 33 06 03 55 1d-11 04 82 01 2a 30 82 01   0..3..U.....*0..
+02c0 - 26 82 0b 2a 2e 62 61 69-64 75 2e 63 6f 6d 82 0e   &..*.baidu.com..
+02d0 - 2a 2e 62 61 69 66 75 62-61 6f 2e 63 6f 6d 82 0e   *.baifubao.com..
+02e0 - 2a 2e 62 64 73 74 61 74-69 63 2e 63 6f 6d 82 0c   *.bdstatic.com..
+02f0 - 2a 2e 68 61 6f 31 32 33-2e 63 6f 6d 82 0b 2a 2e   *.hao123.com..*.
+0300 - 6e 75 6f 6d 69 2e 63 6f-6d 82 0f 2a 2e 62 63 65   nuomi.com..*.bce
+0310 - 2e 62 61 69 64 75 2e 63-6f 6d 82 10 2a 2e 65 79   .baidu.com..*.ey
+0320 - 75 6e 2e 62 61 69 64 75-2e 63 6f 6d 82 0f 2a 2e   un.baidu.com..*.
+0330 - 6d 61 70 2e 62 61 69 64-75 2e 63 6f 6d 82 09 62   map.baidu.com..b
+0340 - 61 69 64 75 2e 63 6f 6d-82 0c 62 61 69 66 75 62   aidu.com..baifub
+0350 - 61 6f 2e 63 6f 6d 82 0c-77 77 77 2e 62 61 69 64   ao.com..www.baid
+0360 - 75 2e 63 6e 82 10 77 77-77 2e 62 61 69 64 75 2e   u.cn..www.baidu.
+0370 - 63 6f 6d 2e 63 6e 82 12-63 6c 69 63 6b 2e 68 6d   com.cn..click.hm
+0380 - 2e 62 61 69 64 75 2e 63-6f 6d 82 10 6c 6f 67 2e   .baidu.com..log.
+0390 - 68 6d 2e 62 61 69 64 75-2e 63 6f 6d 82 10 63 6d   hm.baidu.com..cm
+03a0 - 2e 70 6f 73 2e 62 61 69-64 75 2e 63 6f 6d 82 10   .pos.baidu.com..
+03b0 - 77 6e 2e 70 6f 73 2e 62-61 69 64 75 2e 63 6f 6d   wn.pos.baidu.com
+03c0 - 82 14 75 70 64 61 74 65-2e 70 61 6e 2e 62 61 69   ..update.pan.bai
+03d0 - 64 75 2e 63 6f 6d 82 0f-6d 63 74 2e 79 2e 6e 75   du.com..mct.y.nu
+03e0 - 6f 6d 69 2e 63 6f 6d 30-09 06 03 55 1d 13 04 02   omi.com0...U....
+03f0 - 30 00 30 0e 06 03 55 1d-0f 01 01 ff 04 04 03 02   0.0...U.........
+0400 - 05 a0 30 1d 06 03 55 1d-25 04 16 30 14 06 08 2b   ..0...U.%..0...+
+0410 - 06 01 05 05 07 03 01 06-08 2b 06 01 05 05 07 03   .........+......
+0420 - 02 30 61 06 03 55 1d 20-04 5a 30 58 30 56 06 06   .0a..U. .Z0X0V..
+0430 - 67 81 0c 01 02 02 30 4c-30 23 06 08 2b 06 01 05   g.....0L0#..+...
+0440 - 05 07 02 01 16 17 68 74-74 70 73 3a 2f 2f 64 2e   ......https://d.
+0450 - 73 79 6d 63 62 2e 63 6f-6d 2f 63 70 73 30 25 06   symcb.com/cps0%.
+0460 - 08 2b 06 01 05 05 07 02-02 30 19 0c 17 68 74 74   .+.......0...htt
+0470 - 70 73 3a 2f 2f 64 2e 73-79 6d 63 62 2e 63 6f 6d   ps://d.symcb.com
+0480 - 2f 72 70 61 30 1f 06 03-55 1d 23 04 18 30 16 80   /rpa0...U.#..0..
+0490 - 14 5f 60 cf 61 90 55 df-84 43 14 8a 60 2a b2 f5   ._`.a.U..C..`*..
+04a0 - 7a f4 43 18 ef 30 2b 06-03 55 1d 1f 04 24 30 22   z.C..0+..U...$0"
+04b0 - 30 20 a0 1e a0 1c 86 1a-68 74 74 70 3a 2f 2f 73   0 ......http://s
+04c0 - 73 2e 73 79 6d 63 62 2e-63 6f 6d 2f 73 73 2e 63   s.symcb.com/ss.c
+04d0 - 72 6c 30 57 06 08 2b 06-01 05 05 07 01 01 04 4b   rl0W..+........K
+04e0 - 30 49 30 1f 06 08 2b 06-01 05 05 07 30 01 86 13   0I0...+.....0...
+04f0 - 68 74 74 70 3a 2f 2f 73-73 2e 73 79 6d 63 64 2e   http://ss.symcd.
+0500 - 63 6f 6d 30 26 06 08 2b-06 01 05 05 07 30 02 86   com0&..+.....0..
+0510 - 1a 68 74 74 70 3a 2f 2f-73 73 2e 73 79 6d 63 62   .http://ss.symcb
+0520 - 2e 63 6f 6d 2f 73 73 2e-63 72 74 30 82 01 05 06   .com/ss.crt0....
+0530 - 0a 2b 06 01 04 01 d6 79-02 04 02 04 81 f6 04 81   .+.....y........
+0540 - f3 00 f1 00 77 00 dd eb-1d 2b 7a 0d 4f a6 20 8b   ....w....+z.O. .
+0550 - 81 ad 81 68 70 7e 2e 8e-9d 01 d5 5c 88 8d 3d 11   ...hp~.....\..=.
+0560 - c4                                                .
+read from 0x1f54770 [0x1f5a3e9] (3069 bytes => 3069 (0xBFD))
+0000 - cd b6 ec be cc 00 00 01-56 90 7e 47 3a 00 00 04   ........V.~G:...
+0010 - 03 00 48 30 46 02 21 00-93 2d 3c e8 dc 36 2b d6   ..H0F.!..-<..6+.
+0020 - fd ea 83 0d f4 07 fd fb-1b 38 12 4f e8 97 a9 9b   .........8.O....
+0030 - 56 8f 51 63 56 b6 b0 cd-02 21 00 cc 54 7a bb a8   V.QcV....!..Tz..
+0040 - e9 b2 cb 9a 5a ac 13 88-56 61 c0 ce bb c8 62 bc   ....Z...Va....b.
+0050 - 92 b8 4d e7 d3 d4 d0 e1-6f 4e c3 00 76 00 a4 b9   ..M.....oN..v...
+0060 - 09 90 b4 18 58 14 87 bb-13 a2 cc 67 70 0a 3c 35   ....X......gp.<5
+0070 - 98 04 f9 1b df b8 e3 77-cd 0e c8 0d dc 10 00 00   .......w........
+0080 - 01 56 90 7e 47 5a 00 00-04 03 00 47 30 45 02 20   .V.~GZ.....G0E. 
+0090 - 1f 44 21 bd 58 62 8b 42-12 dc 3e 0e 43 bf ef 0c   .D!.Xb.B..>.C...
+00a0 - a9 4b 25 1d e7 39 6b 03-3c 6a 14 c1 e1 8d 1d 77   .K%..9k.<j.....w
+00b0 - 02 21 00 8c ee cb 42 41-52 c4 e6 93 e1 20 e4 0a   .!....BAR.... ..
+00c0 - e8 6c fa a0 5d 81 5c d6-59 57 45 c7 98 e2 e4 d9   .l..].\.YWE.....
+00d0 - 88 04 99 30 0d 06 09 2a-86 48 86 f7 0d 01 01 0b   ...0...*.H......
+00e0 - 05 00 03 82 01 01 00 41-2c 36 ad a8 50 9d af 02   .......A,6..P...
+00f0 - 2b 0e 87 a7 43 b7 82 3e-9a 75 1f 41 bd 06 f1 c8   +...C..>.u.A....
+0100 - fb 92 40 5d 08 88 e9 49-dd 89 29 1a ab b0 3d 5a   ..@]...I..)...=Z
+0110 - f8 00 b1 51 8d c3 5c 06-64 88 f2 b0 14 1a 7f 65   ...Q..\.d......e
+0120 - 61 26 96 d2 15 9c 33 f4-3f 6d de 99 93 00 0a 55   a&....3.?m.....U
+0130 - 49 8d 2e 52 fa a2 16 0e-d7 36 a0 e8 aa ed e2 c8   I..R.....6......
+0140 - 10 4d c3 98 46 cc ff c0-cd 4d 91 a1 3d 52 77 b6   .M..F....M..=Rw.
+0150 - df e7 bc 41 11 6e 56 d6-7c 68 80 c4 84 d4 00 8d   ...A.nV.|h......
+0160 - 7f ff 16 67 08 b1 66 4e-6d e5 17 16 eb 3b c6 42   ...g..fNm....;.B
+0170 - 22 7c fb 73 80 f8 d0 3c-b7 25 1c 1a 3d 66 84 30   "|.s...<.%..=f.0
+0180 - 5b ed 9e 32 8d b9 fc 72-29 72 e4 30 37 e2 75 e9   [..2...r)r.07.u.
+0190 - 89 85 e7 1c 68 9c e5 32-e7 42 46 85 21 b6 7d cf   ....h..2.BF.!.}.
+01a0 - b1 aa ae 81 3c a0 ba d3-52 13 b2 f9 91 4d b2 bc   ....<...R....M..
+01b0 - 1a 9c d3 be 82 a7 fa 73-9f 55 fb 58 50 cd 1b e4   .......s.U.XP...
+01c0 - 28 dd b8 27 37 56 8f 01-f1 8e c9 7f b5 8e b5 0c   (..'7V..........
+01d0 - 7b cd 16 c9 9c eb cd e0-80 b8 c8 f9 95 8c c9 ad   {...............
+01e0 - 54 70 39 b1 00 38 4d 00-05 3c 30 82 05 38 30 82   Tp9..8M..<0..80.
+01f0 - 04 20 a0 03 02 01 02 02-10 51 3f b9 74 38 70 b7   . .......Q?.t8p.
+0200 - 34 40 41 8d 30 93 06 99-ff 30 0d 06 09 2a 86 48   4@A.0....0...*.H
+0210 - 86 f7 0d 01 01 0b 05 00-30 81 ca 31 0b 30 09 06   ........0..1.0..
+0220 - 03 55 04 06 13 02 55 53-31 17 30 15 06 03 55 04   .U....US1.0...U.
+0230 - 0a 13 0e 56 65 72 69 53-69 67 6e 2c 20 49 6e 63   ...VeriSign, Inc
+0240 - 2e 31 1f 30 1d 06 03 55-04 0b 13 16 56 65 72 69   .1.0...U....Veri
+0250 - 53 69 67 6e 20 54 72 75-73 74 20 4e 65 74 77 6f   Sign Trust Netwo
+0260 - 72 6b 31 3a 30 38 06 03-55 04 0b 13 31 28 63 29   rk1:08..U...1(c)
+0270 - 20 32 30 30 36 20 56 65-72 69 53 69 67 6e 2c 20    2006 VeriSign, 
+0280 - 49 6e 63 2e 20 2d 20 46-6f 72 20 61 75 74 68 6f   Inc. - For autho
+0290 - 72 69 7a 65 64 20 75 73-65 20 6f 6e 6c 79 31 45   rized use only1E
+02a0 - 30 43 06 03 55 04 03 13-3c 56 65 72 69 53 69 67   0C..U...<VeriSig
+02b0 - 6e 20 43 6c 61 73 73 20-33 20 50 75 62 6c 69 63   n Class 3 Public
+02c0 - 20 50 72 69 6d 61 72 79-20 43 65 72 74 69 66 69    Primary Certifi
+02d0 - 63 61 74 69 6f 6e 20 41-75 74 68 6f 72 69 74 79   cation Authority
+02e0 - 20 2d 20 47 35 30 1e 17-0d 31 33 31 30 33 31 30    - G50...1310310
+02f0 - 30 30 30 30 30 5a 17 0d-32 33 31 30 33 30 32 33   00000Z..23103023
+0300 - 35 39 35 39 5a 30 7e 31-0b 30 09 06 03 55 04 06   5959Z0~1.0...U..
+0310 - 13 02 55 53 31 1d 30 1b-06 03 55 04 0a 13 14 53   ..US1.0...U....S
+0320 - 79 6d 61 6e 74 65 63 20-43 6f 72 70 6f 72 61 74   ymantec Corporat
+0330 - 69 6f 6e 31 1f 30 1d 06-03 55 04 0b 13 16 53 79   ion1.0...U....Sy
+0340 - 6d 61 6e 74 65 63 20 54-72 75 73 74 20 4e 65 74   mantec Trust Net
+0350 - 77 6f 72 6b 31 2f 30 2d-06 03 55 04 03 13 26 53   work1/0-..U...&S
+0360 - 79 6d 61 6e 74 65 63 20-43 6c 61 73 73 20 33 20   ymantec Class 3 
+0370 - 53 65 63 75 72 65 20 53-65 72 76 65 72 20 43 41   Secure Server CA
+0380 - 20 2d 20 47 34 30 82 01-22 30 0d 06 09 2a 86 48    - G40.."0...*.H
+0390 - 86 f7 0d 01 01 01 05 00-03 82 01 0f 00 30 82 01   .............0..
+03a0 - 0a 02 82 01 01 00 b2 d8-05 ca 1c 74 2d b5 17 56   ...........t-..V
+03b0 - 39 c5 4a 52 09 96 e8 4b-d8 0c f1 68 9f 9a 42 28   9.JR...K...h..B(
+03c0 - 62 c3 a5 30 53 7e 55 11-82 5b 03 7a 0d 2f e1 79   b..0S~U..[.z./.y
+03d0 - 04 c9 b4 96 77 19 81 01-94 59 f9 bc f7 7a 99 27   ....w....Y...z.'
+03e0 - 82 2d b7 83 dd 5a 27 7f-b2 03 7a 9c 53 25 e9 48   .-...Z'...z.S%.H
+03f0 - 1f 46 4f c8 9d 29 f8 be-79 56 f6 f7 fd d9 3a 68   .FO..)..yV....:h
+0400 - da 8b 4b 82 33 41 12 c3-c8 3c cc d6 96 7a 84 21   ..K.3A...<...z.!
+0410 - 1a 22 04 03 27 17 8b 1c-68 61 93 0f 0e 51 80 33   ."..'...ha...Q.3
+0420 - 1d b4 b5 ce eb 7e d0 62-ac ee b3 7b 01 74 ef 69   .....~.b...{.t.i
+0430 - 35 eb ca d5 3d a9 ee 97-98 ca 8d aa 44 0e 25 99   5...=.......D.%.
+0440 - 4a 15 96 a4 ce 6d 02 54-1f 2a 6a 26 e2 06 3a 63   J....m.T.*j&..:c
+0450 - 48 ac b4 4c d1 75 93 50-ff 13 2f d6 da e1 c6 18   H..L.u.P../.....
+0460 - f5 9f c9 25 5d f3 00 3a-de 26 4d b4 29 09 cd 0f   ...%]..:.&M.)...
+0470 - 3d 23 6f 16 4a 81 16 fb-f2 83 10 c3 b8 d6 d8 55   =#o.J..........U
+0480 - 32 3d f1 bd 0f bd 8c 52-95 4a 16 97 7a 52 21 63   2=.....R.J..zR!c
+0490 - 75 2f 16 f9 c4 66 be f5-b5 09 d8 ff 27 00 cd 44   u/...f......'..D
+04a0 - 7c 6f 4b 3f b0 f7 02 03-01 00 01 a3 82 01 63 30   |oK?..........c0
+04b0 - 82 01 5f 30 12 06 03 55-1d 13 01 01 ff 04 08 30   .._0...U.......0
+04c0 - 06 01 01 ff 02 01 00 30-30 06 03 55 1d 1f 04 29   .......00..U...)
+04d0 - 30 27 30 25 a0 23 a0 21-86 1f 68 74 74 70 3a 2f   0'0%.#.!..http:/
+04e0 - 2f 73 31 2e 73 79 6d 63-62 2e 63 6f 6d 2f 70 63   /s1.symcb.com/pc
+04f0 - 61 33 2d 67 35 2e 63 72-6c 30 0e 06 03 55 1d 0f   a3-g5.crl0...U..
+0500 - 01 01 ff 04 04 03 02 01-06 30 2f 06 08 2b 06 01   .........0/..+..
+0510 - 05 05 07 01 01 04 23 30-21 30 1f 06 08 2b 06 01   ......#0!0...+..
+0520 - 05 05 07 30 01 86 13 68-74 74 70 3a 2f 2f 73 32   ...0...http://s2
+0530 - 2e 73 79 6d 63 62 2e 63-6f 6d 30 6b 06 03 55 1d   .symcb.com0k..U.
+0540 - 20 04 64 30 62 30 60 06-0a 60 86 48 01 86 f8 45    .d0b0`..`.H...E
+0550 - 01 07 36 30 52 30 26 06-08 2b 06 01 05 05 07 02   ..60R0&..+......
+0560 - 01 16 1a 68 74 74 70 3a-2f 2f 77 77 77 2e 73 79   ...http://www.sy
+0570 - 6d 61 75 74 68 2e 63 6f-6d 2f 63 70 73 30 28 06   mauth.com/cps0(.
+0580 - 08 2b 06 01 05 05 07 02-02 30 1c 1a 1a 68 74 74   .+.......0...htt
+0590 - 70 3a 2f 2f 77 77 77 2e-73 79 6d 61 75 74 68 2e   p://www.symauth.
+05a0 - 63 6f 6d 2f 72 70 61 30-29 06 03 55 1d 11 04 22   com/rpa0)..U..."
+05b0 - 30 20 a4 1e 30 1c 31 1a-30 18 06 03 55 04 03 13   0 ..0.1.0...U...
+05c0 - 11 53 79 6d 61 6e 74 65-63 50 4b 49 2d 31 2d 35   .SymantecPKI-1-5
+05d0 - 33 34 30 1d 06 03 55 1d-0e 04 16 04 14 5f 60 cf   340...U......_`.
+05e0 - 61 90 55 df 84 43 14 8a-60 2a b2 f5 7a f4 43 18   a.U..C..`*..z.C.
+05f0 - ef 30 1f 06 03 55 1d 23-04 18 30 16 80 14 7f d3   .0...U.#..0.....
+0600 - 65 a7 c2 dd ec bb f0 30-09 f3 43 39 fa 02 af 33   e......0..C9...3
+0610 - 31 33 30 0d 06 09 2a 86-48 86 f7 0d 01 01 0b 05   130...*.H.......
+0620 - 00 03 82 01 01 00 5e 94-56 49 dd 8e 2d 65 f5 c1   ......^.VI..-e..
+0630 - 36 51 b6 03 e3 da 9e 73-19 f2 1f 59 ab 58 7e 6c   6Q.....s...Y.X~l
+0640 - 26 05 2c fa 81 d7 5c 23-17 22 2c 37 93 f7 86 ec   &.,...\#.",7....
+0650 - 85 e6 b0 a3 fd 1f e2 32-a8 45 6f e1 d9 fb b9 af   .......2.Eo.....
+0660 - d2 70 a0 32 42 65 bf 84-fe 16 2a 8f 3f c5 a6 d6   .p.2Be....*.?...
+0670 - a3 93 7d 43 e9 74 21 91-35 28 f4 63 e9 2e ed f7   ..}C.t!.5(.c....
+0680 - f5 5c 7f 4b 9a b5 20 e9-0a bd e0 45 10 0c 14 94   .\.K.. ....E....
+0690 - 9a 5d a5 e3 4b 91 e8 24-9b 46 40 65 f4 22 72 cd   .]..K..$.F@e."r.
+06a0 - 99 f8 88 11 f5 f3 7f e6-33 82 e6 a8 c5 7e fe d0   ........3....~..
+06b0 - 08 e2 25 58 08 71 68 e6-cd a2 e6 14 de 4e 52 24   ..%X.qh......NR$
+06c0 - 2d fd e5 79 13 53 e7 5e-2f 2d 4d 1b 6d 40 15 52   -..y.S.^/-M.m@.R
+06d0 - 2b f7 87 89 78 12 81 6e-d9 4d aa 2d 78 d4 c2 2c   +...x..n.M.-x..,
+06e0 - 3d 08 5f 87 91 9e 1f 0e-b0 de 30 52 64 86 89 aa   =._.......0Rd...
+06f0 - 9d 66 9c 0e 76 0c 80 f2-74 d8 2a f8 b8 3a ce d7   .f..v...t.*..:..
+0700 - d6 0f 11 be 6b ab 14 f5-bd 41 a0 22 63 89 f1 ba   ....k....A."c...
+0710 - 0f 6f 29 63 66 2d 3f ac-8c 72 c5 fb c7 e4 d4 0f   .o)cf-?..r......
+0720 - f2 3b 4f 8c 29 c7 00 04-d4 30 82 04 d0 30 82 04   .;O.)....0...0..
+0730 - 39 a0 03 02 01 02 02 10-25 0c e8 e0 30 61 2e 9f   9.......%...0a..
+0740 - 2b 89 f7 05 4d 7c f8 fd-30 0d 06 09 2a 86 48 86   +...M|..0...*.H.
+0750 - f7 0d 01 01 05 05 00 30-5f 31 0b 30 09 06 03 55   .......0_1.0...U
+0760 - 04 06 13 02 55 53 31 17-30 15 06 03 55 04 0a 13   ....US1.0...U...
+0770 - 0e 56 65 72 69 53 69 67-6e 2c 20 49 6e 63 2e 31   .VeriSign, Inc.1
+0780 - 37 30 35 06 03 55 04 0b-13 2e 43 6c 61 73 73 20   705..U....Class 
+0790 - 33 20 50 75 62 6c 69 63-20 50 72 69 6d 61 72 79   3 Public Primary
+07a0 - 20 43 65 72 74 69 66 69-63 61 74 69 6f 6e 20 41    Certification A
+07b0 - 75 74 68 6f 72 69 74 79-30 1e 17 0d 30 36 31 31   uthority0...0611
+07c0 - 30 38 30 30 30 30 30 30-5a 17 0d 32 31 31 31 30   08000000Z..21110
+07d0 - 37 32 33 35 39 35 39 5a-30 81 ca 31 0b 30 09 06   7235959Z0..1.0..
+07e0 - 03 55 04 06 13 02 55 53-31 17 30 15 06 03 55 04   .U....US1.0...U.
+07f0 - 0a 13 0e 56 65 72 69 53-69 67 6e 2c 20 49 6e 63   ...VeriSign, Inc
+0800 - 2e 31 1f 30 1d 06 03 55-04 0b 13 16 56 65 72 69   .1.0...U....Veri
+0810 - 53 69 67 6e 20 54 72 75-73 74 20 4e 65 74 77 6f   Sign Trust Netwo
+0820 - 72 6b 31 3a 30 38 06 03-55 04 0b 13 31 28 63 29   rk1:08..U...1(c)
+0830 - 20 32 30 30 36 20 56 65-72 69 53 69 67 6e 2c 20    2006 VeriSign, 
+0840 - 49 6e 63 2e 20 2d 20 46-6f 72 20 61 75 74 68 6f   Inc. - For autho
+0850 - 72 69 7a 65 64 20 75 73-65 20 6f 6e 6c 79 31 45   rized use only1E
+0860 - 30 43 06 03 55 04 03 13-3c 56 65 72 69 53 69 67   0C..U...<VeriSig
+0870 - 6e 20 43 6c 61 73 73 20-33 20 50 75 62 6c 69 63   n Class 3 Public
+0880 - 20 50 72 69 6d 61 72 79-20 43 65 72 74 69 66 69    Primary Certifi
+0890 - 63 61 74 69 6f 6e 20 41-75 74 68 6f 72 69 74 79   cation Authority
+08a0 - 20 2d 20 47 35 30 82 01-22 30 0d 06 09 2a 86 48    - G50.."0...*.H
+08b0 - 86 f7 0d 01 01 01 05 00-03 82 01 0f 00 30 82 01   .............0..
+08c0 - 0a 02 82 01 01 00 af 24-08 08 29 7a 35 9e 60 0c   .......$..)z5.`.
+08d0 - aa e7 4b 3b 4e dc 7c bc-3c 45 1c bb 2b e0 fe 29   ..K;N.|.<E..+..)
+08e0 - 02 f9 57 08 a3 64 85 15-27 f5 f1 ad c8 31 89 5d   ..W..d..'....1.]
+08f0 - 22 e8 2a aa a6 42 b3 8f-f8 b9 55 b7 b1 b7 4b b3   ".*..B....U...K.
+0900 - fe 8f 7e 07 57 ec ef 43-db 66 62 15 61 cf 60 0d   ..~.W..C.fb.a.`.
+0910 - a4 d8 de f8 e0 c3 62 08-3d 54 13 eb 49 ca 59 54   ......b.=T..I.YT
+0920 - 85 26 e5 2b 8f 1b 9f eb-f5 a1 91 c2 33 49 d8 43   .&.+........3I.C
+0930 - 63 6a 52 4b d2 8f e8 70-51 4d d1 89 69 7b c7 70   cjRK...pQM..i{.p
+0940 - f6 b3 dc 12 74 db 7b 5d-4b 56 d3 96 bf 15 77 a1   ....t.{]KV....w.
+0950 - b0 f4 a2 25 f2 af 1c 92-67 18 e5 f4 06 04 ef 90   ...%....g.......
+0960 - b9 e4 00 e4 dd 3a b5 19-ff 02 ba f4 3c ee e0 8b   .....:......<...
+0970 - eb 37 8b ec f4 d7 ac f2-f6 f0 3d af dd 75 91 33   .7........=..u.3
+0980 - 19 1d 1c 40 cb 74 24 19-21 93 d9 14 fe ac 2a 52   ...@.t$.!.....*R
+0990 - c7 8f d5 04 49 e4 8d 63-47 88 3c 69 83 cb fe 47   ....I..cG.<i...G
+09a0 - bd 2b 7e 4f c5 95 ae 0e-9d d4 d1 43 c0 67 73 e3   .+~O.......C.gs.
+09b0 - 14 08 7e e5 3f 9f 73 b8-33 0a cf 5d 3f 34 87 96   ..~.?.s.3..]?4..
+09c0 - 8a ee 53 e8 25 15 02 03-01 00 01 a3 82 01 9b 30   ..S.%..........0
+09d0 - 82 01 97 30 0f 06 03 55-1d 13 01 01 ff 04 05 30   ...0...U.......0
+09e0 - 03 01 01 ff 30 31 06 03-55 1d 1f 04 2a 30 28 30   ....01..U...*0(0
+09f0 - 26 a0 24 a0 22 86 20 68-74 74 70 3a 2f 2f 63 72   &.$.". http://cr
+0a00 - 6c 2e 76 65 72 69 73 69-67 6e 2e 63 6f 6d 2f 70   l.verisign.com/p
+0a10 - 63 61 33 2e 63 72 6c 30-0e 06 03 55 1d 0f 01 01   ca3.crl0...U....
+0a20 - ff 04 04 03 02 01 06 30-3d 06 03 55 1d 20 04 36   .......0=..U. .6
+0a30 - 30 34 30 32 06 04 55 1d-20 00 30 2a 30 28 06 08   0402..U. .0*0(..
+0a40 - 2b 06 01 05 05 07 02 01-16 1c 68 74 74 70 73 3a   +.........https:
+0a50 - 2f 2f 77 77 77 2e 76 65-72 69 73 69 67 6e 2e 63   //www.verisign.c
+0a60 - 6f 6d 2f 63 70 73 30 1d-06 03 55 1d 0e 04 16 04   om/cps0...U.....
+0a70 - 14 7f d3 65 a7 c2 dd ec-bb f0 30 09 f3 43 39 fa   ...e......0..C9.
+0a80 - 02 af 33 31 33 30 6d 06-08 2b 06 01 05 05 07 01   ..3130m..+......
+0a90 - 0c 04 61 30 5f a1 5d a0-5b 30 59 30 57 30 55 16   ..a0_.].[0Y0W0U.
+0aa0 - 09 69 6d 61 67 65 2f 67-69 66 30 21 30 1f 30 07   .image/gif0!0.0.
+0ab0 - 06 05 2b 0e 03 02 1a 04-14 8f e5 d3 1a 86 ac 8d   ..+.............
+0ac0 - 8e 6b c3 cf 80 6a d4 48-18 2c 7b 19 2e 30 25 16   .k...j.H.,{..0%.
+0ad0 - 23 68 74 74 70 3a 2f 2f-6c 6f 67 6f 2e 76 65 72   #http://logo.ver
+0ae0 - 69 73 69 67 6e 2e 63 6f-6d 2f 76 73 6c 6f 67 6f   isign.com/vslogo
+0af0 - 2e 67 69 66 30 34 06 08-2b 06 01 05 05 07 01 01   .gif04..+.......
+0b00 - 04 28 30 26 30 24 06 08-2b 06 01 05 05 07 30 01   .(0&0$..+.....0.
+0b10 - 86 18 68 74 74 70 3a 2f-2f 6f 63 73 70 2e 76 65   ..http://ocsp.ve
+0b20 - 72 69 73 69 67 6e 2e 63-6f 6d 30 3e 06 03 55 1d   risign.com0>..U.
+0b30 - 25 04 37 30 35 06 08 2b-06 01 05 05 07 03 01 06   %.705..+........
+0b40 - 08 2b 06 01 05 05 07 03-02 06 08 2b 06 01 05 05   .+.........+....
+0b50 - 07 03 03 06 09 60 86 48-01 86 f8 42 04 01 06 0a   .....`.H...B....
+0b60 - 60 86 48 01 86 f8 45 01-08 01 30 0d 06 09 2a 86   `.H...E...0...*.
+0b70 - 48 86 f7 0d 01 01 05 05-00 03 81 81 00 13 02 dd   H...............
+0b80 - f8 e8 86 00 f2 5a f8 f8-20 0c 59 88 62 07 ce ce   .....Z.. .Y.b...
+0b90 - f7 4e f9 bb 59 a1 98 e5-e1 38 dd 4e bc 66 18 d3   .N..Y....8.N.f..
+0ba0 - ad eb 18 f2 0d c9 6d 3e-4a 94 20 c3 3c ba bd 65   ......m>J. .<..e
+0bb0 - 54 c6 af 44 b3 10 ad 2c-6b 3e ab d7 07 b6 b8 81   T..D...,k>......
+0bc0 - 63 c5 f9 5e 2e e5 2a 67-ce cd 33 0c 2a d7 89 56   c..^..*g..3.*..V
+0bd0 - 03 23 1f b3 be e8 3a 08-59 b4 ec 45 35 f7 8a 5b   .#....:.Y..E5..[
+0be0 - ff 66 cf 50 af c6 6d 57-8d 19 78 b7 b9 a2 d1 57   .f.P..mW..x....W
+0bf0 - ea 1f 9a 4b af ba c9 8e-12 7e c6 bd ff            ...K.....~...
+depth=2 C = US, O = "VeriSign, Inc.", OU = VeriSign Trust Network, OU = "(c) 2006 VeriSign, Inc. - For authorized use only", CN = VeriSign Class 3 Public Primary Certification Authority - G5
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=1 C = US, O = Symantec Corporation, OU = Symantec Trust Network, CN = Symantec Class 3 Secure Server CA - G4
+verify return:1
+depth=0 C = CN, ST = beijing, L = beijing, O = "BeiJing Baidu Netcom Science Technology Co., Ltd", OU = service operation department., CN = baidu.com
+verify return:1
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 16 03 03 01 4d                                    ....M
+read from 0x1f54770 [0x1f59e88] (333 bytes => 333 (0x14D))
+0000 - 0c 00 01 49 03 00 17 41-04 e5 8d 94 15 55 a5 36   ...I...A.....U.6
+0010 - 13 0c 8c be 3c eb 60 51-fb c8 c2 3d bb 12 39 88   ....<.`Q...=..9.
+0020 - 7c 60 e4 15 a0 b6 e3 32-3d b5 41 9e c3 9f ee de   |`.....2=.A.....
+0030 - 40 b4 82 9d b0 00 ac c3-29 cb 7c 1b a7 49 7e 76   @.......).|..I~v
+0040 - 65 c9 ad 17 f3 06 0b ae-fa 06 01 01 00 04 ad 60   e..............`
+0050 - 7c e1 61 51 8d 70 c6 1e-ea 55 dd 69 ac f4 1d 18   |.aQ.p...U.i....
+0060 - 91 94 b1 72 af 22 d3 47-8d 31 6a 59 2a 1b 8f 6b   ...r.".G.1jY*..k
+0070 - 81 aa c6 da e0 a9 80 bc-df d1 57 c5 93 76 bd 59   ..........W..v.Y
+0080 - 4b 03 c4 83 ad 32 8d 90-da c0 ca 38 33 d8 57 02   K....2.....83.W.
+0090 - fd cd fd be 21 a6 84 31-7c 9c 96 40 b7 a9 c7 75   ....!..1|..@...u
+00a0 - 87 c0 1f c9 03 a2 d2 3a-c9 bf b3 13 41 db aa bf   .......:....A...
+00b0 - fe 2c 88 ac 67 10 40 ca-23 86 5d cb ea a7 c0 85   .,..g.@.#.].....
+00c0 - 8b f9 cb 77 35 2d e2 c5-fe c2 60 b5 40 8d 5b ef   ...w5-....`.@.[.
+00d0 - 29 93 c1 3a 86 d5 e7 10-21 f7 21 58 8f 42 af f8   )..:....!.!X.B..
+00e0 - d5 18 72 f3 1a cb 2c fc-fb 33 93 60 bd d7 19 03   ..r...,..3.`....
+00f0 - 77 48 6d 10 cf c4 8d d3-d4 03 21 40 96 81 93 57   wHm.......!@...W
+0100 - 9b 49 aa 9f 92 57 bf 8e-4a 0c 38 da ef 4c ce 6e   .I...W..J.8..L.n
+0110 - 73 ab 2c b5 ef 3d 33 84-2a 5b c5 9e d1 aa 01 04   s.,..=3.*[......
+0120 - 88 ad ee 19 dc 01 85 18-b5 96 c8 f7 5c 15 71 1d   ............\.q.
+0130 - 93 bd 26 b5 76 5f c2 c3-e9 af 85 4f 93 a9 80 6e   ..&.v_.....O...n
+0140 - 31 21 f0 68 1c 22 95 47-7c f1 16 07 1b            1!.h.".G|....
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 16 03 03 00 04                                    .....
+read from 0x1f54770 [0x1f59e88] (4 bytes => 4 (0x4))
+0000 - 0e                                                .
+0004 - <SPACES/NULS>
+write to 0x1f54770 [0x1f630a0] (126 bytes => 126 (0x7E))
+0000 - 16 03 03 00 46 10 00 00-42 41 04 a0 45 00 3b 87   ....F...BA..E.;.
+0010 - 8d cc 10 c5 04 f9 0a be-50 6c 28 16 c0 73 6f aa   ........Pl(..so.
+0020 - c6 09 b5 f1 31 5b fc ab-40 00 c8 4b 1d 1b 3e b9   ....1[..@..K..>.
+0030 - dc ca 46 87 39 a3 e7 c3-75 65 94 9d 7f f1 c8 da   ..F.9...ue......
+0040 - c4 93 62 9a 48 83 ef 62-80 1c 90 14 03 03 00 01   ..b.H..b........
+0050 - 01 16 03 03 00 28 48 75-24 2b 79 80 dd 74 41 69   .....(Hu$+y..tAi
+0060 - 26 f6 1f f1 df dc 44 ce-c5 50 18 c2 6b 20 12 d4   &.....D..P..k ..
+0070 - 69 89 8a 61 a4 f2 55 ad-b6 18 5c e8 a0 80         i..a..U...\...
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 16 03 03 00 aa                                    .....
+read from 0x1f54770 [0x1f59e88] (170 bytes => 170 (0xAA))
+0000 - 04 00 00 a6 00 01 19 40-00 a0 c9 5a 30 41 15 3f   .......@...Z0A.?
+0010 - 8d f3 07 77 3d 98 f2 b2-75 23 ce f9 51 d8 7e a8   ...w=...u#..Q.~.
+0020 - c2 3a df 59 fc d6 a0 5b-81 e9 39 8d 62 19 0d d9   .:.Y...[..9.b...
+0030 - 91 4a 13 40 58 f9 fe e0-6e 5f f1 be ec b4 0c cc   .J.@X...n_......
+0040 - 3d f4 2f 3a 28 81 73 e9-83 ed 53 0b 8b fc bc a5   =./:(.s...S.....
+0050 - 67 07 be 75 af 6a f7 e0-61 16 cb 45 78 ba 06 c7   g..u.j..a..Ex...
+0060 - d9 91 87 04 3b 5e 35 88-d8 19 b5 0b 7e 92 4e 40   ....;^5.....~.N@
+0070 - f6 1a f3 a9 f9 86 d7 93-9c 95 79 2f a8 28 76 12   ..........y/.(v.
+0080 - 3f 01 5b d2 23 9b 05 93-8e 2e 3d 23 e6 d1 bd 7d   ?.[.#.....=#...}
+0090 - be 9f 4b 8b c1 73 dc 52-3d 2c 9b 66 81 71 fe 15   ..K..s.R=,.f.q..
+00a0 - cc 71 39 d1 fe ff a0 41-69 84                     .q9....Ai.
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 14 03 03 00 01                                    .....
+read from 0x1f54770 [0x1f59e88] (1 bytes => 1 (0x1))
+0000 - 01                                                .
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 16 03 03 00 28                                    ....(
+read from 0x1f54770 [0x1f59e88] (40 bytes => 40 (0x28))
+0000 - d4 b2 7b 3d 2b 1c 8e 6d-de 14 47 7a 85 ca c3 73   ..{=+..m..Gz...s
+0010 - cd 13 95 a8 8c 6f 90 9d-19 ee b2 b1 2e 7f 1d cb   .....o..........
+0020 - 17 79 6e b2 4e 8d c5 f9-                          .yn.N...
+---
+Certificate chain
+ 0 s:/C=CN/ST=beijing/L=beijing/O=BeiJing Baidu Netcom Science Technology Co., Ltd/OU=service operation department./CN=baidu.com
+   i:/C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+ 1 s:/C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+   i:/C=US/O=VeriSign, Inc./OU=VeriSign Trust Network/OU=(c) 2006 VeriSign, Inc. - For authorized use only/CN=VeriSign Class 3 Public Primary Certification Authority - G5
+ 2 s:/C=US/O=VeriSign, Inc./OU=VeriSign Trust Network/OU=(c) 2006 VeriSign, Inc. - For authorized use only/CN=VeriSign Class 3 Public Primary Certification Authority - G5
+   i:/C=US/O=VeriSign, Inc./OU=Class 3 Public Primary Certification Authority
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIHOjCCBiKgAwIBAgIPAaAMWZKgoUJvdRQzvVy/MA0GCSqGSIb3DQEBCwUAMH4x
+CzAJBgNVBAYTAlVTMR0wGwYDVQQKExRTeW1hbnRlYyBDb3Jwb3JhdGlvbjEfMB0G
+A1UECxMWU3ltYW50ZWMgVHJ1c3QgTmV0d29yazEvMC0GA1UEAxMmU3ltYW50ZWMg
+Q2xhc3MgMyBTZWN1cmUgU2VydmVyIENBIC0gRzQwHhcNMTYwODE1MDAwMDAwWhcN
+MTcwODE2MjM1OTU5WjCBqDELMAkGA1UEBhMCQ04xEDAOBgNVBAgMB2JlaWppbmcx
+EDAOBgNVBAcMB2JlaWppbmcxOTA3BgNVBAoMMEJlaUppbmcgQmFpZHUgTmV0Y29t
+IFNjaWVuY2UgVGVjaG5vbG9neSBDby4sIEx0ZDEmMCQGA1UECwwdc2VydmljZSBv
+cGVyYXRpb24gZGVwYXJ0bWVudC4xEjAQBgNVBAMMCWJhaWR1LmNvbTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBAMsV6Ty0lfOjGN04Pmd8m0OuU0aWrFnm
+KqsvkcxEtFfT9lgyhrZe3Tbyq7xjMsNluuJFeRlvxgszGgS/LNxfpkaY6sg67R/t
+vaxB8LmuIJn9e7RI3dZUoyZDTBFWTovVsdoOlnF00YRRKN9tbKo1rK4rzux+gqRt
+f4Hsk+mjTBhPkY0J/4qocUGeGYxPjHlPIJABBN5UttUv3Be10fhUzP1OHHyj+iYq
+K/PsMIo+PoZclb0ox1K4Vvg3czjy8BAF76sw+mqr/w/v16WemjFADyIqoUXuBQyh
+p3h4FmgmiXSRJeJ8ik9tzzjdIb0KhrRbdjQJyA4pDujYKk2g+4Ht2R0CAwEAAaOC
+A4gwggOEMIIBMwYDVR0RBIIBKjCCASaCCyouYmFpZHUuY29tgg4qLmJhaWZ1YmFv
+LmNvbYIOKi5iZHN0YXRpYy5jb22CDCouaGFvMTIzLmNvbYILKi5udW9taS5jb22C
+DyouYmNlLmJhaWR1LmNvbYIQKi5leXVuLmJhaWR1LmNvbYIPKi5tYXAuYmFpZHUu
+Y29tggliYWlkdS5jb22CDGJhaWZ1YmFvLmNvbYIMd3d3LmJhaWR1LmNughB3d3cu
+YmFpZHUuY29tLmNughJjbGljay5obS5iYWlkdS5jb22CEGxvZy5obS5iYWlkdS5j
+b22CEGNtLnBvcy5iYWlkdS5jb22CEHduLnBvcy5iYWlkdS5jb22CFHVwZGF0ZS5w
+YW4uYmFpZHUuY29tgg9tY3QueS5udW9taS5jb20wCQYDVR0TBAIwADAOBgNVHQ8B
+Af8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMGEGA1UdIARa
+MFgwVgYGZ4EMAQICMEwwIwYIKwYBBQUHAgEWF2h0dHBzOi8vZC5zeW1jYi5jb20v
+Y3BzMCUGCCsGAQUFBwICMBkMF2h0dHBzOi8vZC5zeW1jYi5jb20vcnBhMB8GA1Ud
+IwQYMBaAFF9gz2GQVd+EQxSKYCqy9Xr0QxjvMCsGA1UdHwQkMCIwIKAeoByGGmh0
+dHA6Ly9zcy5zeW1jYi5jb20vc3MuY3JsMFcGCCsGAQUFBwEBBEswSTAfBggrBgEF
+BQcwAYYTaHR0cDovL3NzLnN5bWNkLmNvbTAmBggrBgEFBQcwAoYaaHR0cDovL3Nz
+LnN5bWNiLmNvbS9zcy5jcnQwggEFBgorBgEEAdZ5AgQCBIH2BIHzAPEAdwDd6x0r
+eg1PpiCLga2BaHB+Lo6dAdVciI09EcTNtuy+zAAAAVaQfkc6AAAEAwBIMEYCIQCT
+LTzo3DYr1v3qgw30B/37GzgST+iXqZtWj1FjVrawzQIhAMxUeruo6bLLmlqsE4hW
+YcDOu8hivJK4TefT1NDhb07DAHYApLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fN
+DsgN3BAAAAFWkH5HWgAABAMARzBFAiAfRCG9WGKLQhLcPg5Dv+8MqUslHec5awM8
+ahTB4Y0ddwIhAIzuy0JBUsTmk+Eg5ArobPqgXYFc1llXRceY4uTZiASZMA0GCSqG
+SIb3DQEBCwUAA4IBAQBBLDatqFCdrwIrDoenQ7eCPpp1H0G9BvHI+5JAXQiI6Und
+iSkaq7A9WvgAsVGNw1wGZIjysBQaf2VhJpbSFZwz9D9t3pmTAApVSY0uUvqiFg7X
+NqDoqu3iyBBNw5hGzP/AzU2RoT1Sd7bf57xBEW5W1nxogMSE1ACNf/8WZwixZk5t
+5RcW6zvGQiJ8+3OA+NA8tyUcGj1mhDBb7Z4yjbn8cily5DA34nXpiYXnHGic5TLn
+QkaFIbZ9z7GqroE8oLrTUhOy+ZFNsrwanNO+gqf6c59V+1hQzRvkKN24JzdWjwHx
+jsl/tY61DHvNFsmc683ggLjI+ZWMya1UcDmxADhN
+-----END CERTIFICATE-----
+subject=/C=CN/ST=beijing/L=beijing/O=BeiJing Baidu Netcom Science Technology Co., Ltd/OU=service operation department./CN=baidu.com
+issuer=/C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+---
+No client certificate CA names sent
+Peer signing digest: SHA512
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 5129 bytes and written 340 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.2, Cipher is ECDHE-RSA-AES128-GCM-SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES128-GCM-SHA256
+    Session-ID: 34D3139CF13EA82307F61E58DEDA61B20C5009106AAF0DC58F3DBABF1CBDC1E0
+    Session-ID-ctx: 
+    Master-Key: E4305DB630575220304F39C37ACC077FB3841CB6DD915C639A6C55EA1796861EBDA4FB4F9F6ED42E7298FDEA14C8C9DA
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 72000 (seconds)
+    TLS session ticket:
+    0000 - c9 5a 30 41 15 3f 8d f3-07 77 3d 98 f2 b2 75 23   .Z0A.?...w=...u#
+    0010 - ce f9 51 d8 7e a8 c2 3a-df 59 fc d6 a0 5b 81 e9   ..Q.~..:.Y...[..
+    0020 - 39 8d 62 19 0d d9 91 4a-13 40 58 f9 fe e0 6e 5f   9.b....J.@X...n_
+    0030 - f1 be ec b4 0c cc 3d f4-2f 3a 28 81 73 e9 83 ed   ......=./:(.s...
+    0040 - 53 0b 8b fc bc a5 67 07-be 75 af 6a f7 e0 61 16   S.....g..u.j..a.
+    0050 - cb 45 78 ba 06 c7 d9 91-87 04 3b 5e 35 88 d8 19   .Ex.......;^5...
+    0060 - b5 0b 7e 92 4e 40 f6 1a-f3 a9 f9 86 d7 93 9c 95   ..~.N@..........
+    0070 - 79 2f a8 28 76 12 3f 01-5b d2 23 9b 05 93 8e 2e   y/.(v.?.[.#.....
+    0080 - 3d 23 e6 d1 bd 7d be 9f-4b 8b c1 73 dc 52 3d 2c   =#...}..K..s.R=,
+    0090 - 9b 66 81 71 fe 15 cc 71-39 d1 fe ff a0 41 69 84   .f.q...q9....Ai.
+
+    Start Time: 1486606220
+    Timeout   : 7200 (sec)
+    Verify return code: 20 (unable to get local issuer certificate)
+    Extended master secret: no
+---
+
+read from 0x1f54770 [0x1f59e83] (5 bytes => 5 (0x5))
+0000 - 15 03 03 00 1a                                    .....
+read from 0x1f54770 [0x1f59e88] (26 bytes => 26 (0x1A))
+0000 - d4 b2 7b 3d 2b 1c 8e 6e-60 09 6b bc c8 17 a7 b2   ..{=+..n`.k.....
+0010 - 14 2a 6b aa 57 e3 4d d8-9a 77                     .*k.W.M..w
+closed
+@@@@@ Start Arnold's private test. @@@@@
+SSL connection using ECDHE-RSA-AES128-GCM-SHA256
+Server certificate:
+	 subject: /C=CN/ST=beijing/L=beijing/O=BeiJing Baidu Netcom Science Technology Co., Ltd/OU=service operation department./CN=baidu.com
+	 issuer: /C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 3 Secure Server CA - G4
+write to 0x1f54770 [0x1f5dfd3] (89 bytes => 89 (0x59))
+0000 - 17 03 03 00 54 48 75 24-2b 79 80 dd 75 71 0f 02   ....THu$+y..uq..
+0010 - ab f2 5d 04 43 bc bb e1-e0 b5 3a a7 ae e5 5e 10   ..].C.....:...^.
+0020 - 1f 13 d8 cf 12 8c 0d 36-84 0d 69 a7 be 15 be bc   .......6..i.....
+0030 - ff 08 ef ea c3 c9 ae 6d-19 91 c2 2d 77 37 be ab   .......m...-w7..
+0040 - 66 2f a5 9a c9 17 85 fc-5d 4f 13 87 d6 14 40 16   f/......]O....@.
+0050 - 8e d9 74 41 43 77 ec 5f-6d                        ..tACw._m
+Got 0 chars:''
+write to 0x1f54770 [0x1f5dfd3] (45 bytes => 45 (0x2D))
+0000 - 17 03 03 00 28 48 75 24-2b 79 80 dd 76 bf 56 5b   ....(Hu$+y..v.V[
+0010 - 6c 63 de 5e f6 91 59 b7-ef a7 91 19 75 22 7b 23   lc.^..Y.....u"{#
+0020 - cd 74 24 fe 90 3e ed 69-dc 4e 13 73 a6            .t$..>.i.N.s.
+write to 0x1f54770 [0x1f5dfd3] (58 bytes => 58 (0x3A))
+0000 - 17 03 03 00 35 48 75 24-2b 79 80 dd 77 ee de 33   ....5Hu$+y..w..3
+0010 - fb 28 aa f1 f9 cf 8c df-4a ba e0 fb e6 86 59 66   .(......J.....Yf
+0020 - b3 3b 66 a1 f6 4a 74 3e-31 04 05 a7 4f 59 bd 3b   .;f..Jt>1...OY.;
+0030 - 1a 8f 9f fd 8b 5c 11 3c-49 69                     .....\.<Ii
+write to 0x1f54770 [0x1f5dfd3] (31 bytes => 31 (0x1F))
+0000 - 17 03 03 00 1a 48 75 24-2b 79 80 dd 78 c7 56 0f   .....Hu$+y..x.V.
+0010 - 94 4b 36 42 d6 54 73 85-95 43 c0 4a 01 10 1f      .K6B.Ts..C.J...
+Got 0 chars:''
+@@@@@ End Arnold's private test @@@@@.
+write to 0x1f54770 [0x1f5dfd3] (31 bytes => 31 (0x1F))
+0000 - 15 03 03 00 1a 48 75 24-2b 79 80 dd 79 eb 29 92   .....Hu$+y..y.).
+0010 - e7 f7 4e 85 09 c0 7f fa-27 6d bf ef d5 a3 e8      ..N.....'m.....
+

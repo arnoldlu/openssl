@@ -2129,6 +2129,7 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
             timeoutp = &timeout;
         else
             timeoutp = NULL;
+printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
 
         if (SSL_in_init(con) && !SSL_total_renegotiations(con)) {
             in_init = 1;
@@ -2257,12 +2258,11 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
         }
 
         if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
-	BIO_printf(bio_c_out, "SSL_write www.baidu.com\n");
 	#define HTTP_HEADERS "GET / HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: OpenSSL\r\n\r\n"
 	strcpy(cbuf, HTTP_HEADERS);
 	cbuf_len = strlen(cbuf);
             k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
-	BIO_printf(bio_c_out, "SSL_write end %d\n", SSL_get_error(con, k));
+	printf("@@@@@ %s line=%d SSL_write error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
             switch (SSL_get_error(con, k)) {
             case SSL_ERROR_NONE:
                 cbuf_off += k;
@@ -2334,6 +2334,7 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
         else if (!ssl_pending && FD_ISSET(fileno_stdout(), &writefds))
 #endif
         {
+	printf("@@@@@ %s line=%d raw_write_stdout\n", __func__, __LINE__);
 #ifdef CHARSET_EBCDIC
             ascii2ebcdic(&(sbuf[sbuf_off]), &(sbuf[sbuf_off]), sbuf_len);
 #endif
@@ -2362,8 +2363,8 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
                 }
             }
 #endif
-printf("@@@@@ %s line=%d\n", __func__, __LINE__);
             k = SSL_read(con, sbuf, BUFSIZZ /* BUFSIZZ */ );
+	printf("@@@@@ %s line=%d SSL_read error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
 
             switch (SSL_get_error(con, k)) {
             case SSL_ERROR_NONE:
@@ -2444,6 +2445,7 @@ printf("@@@@@ %s line=%d\n", __func__, __LINE__);
                 assert(lf_num == 0);
             } else
                 i = raw_read_stdin(cbuf, BUFSIZZ);
+	printf("@@@@@ %s line=%d raw_read_stdin cbuf=%s\n", __func__, __LINE__, cbuf);
 #if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
             if (i == 0)
                 at_eof = 1;
@@ -2486,7 +2488,7 @@ printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (in_init)
         print_stuff(bio_c_out, con, full_log);
 
-{
+#if 0
 	BIO_printf(bio_c_out, "@@@@@ Start Arnold's private test. @@@@@\n");
 #if 1
 	X509*	 server_cert;
@@ -2522,7 +2524,7 @@ printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 	print_stuff(bio_c_out, con, full_log);
 #endif
 	BIO_printf(bio_c_out, "@@@@@ End Arnold's private test @@@@@.\n");
-}
+#endif
 
     do_ssl_shutdown(con);
 #if defined(OPENSSL_SYS_WINDOWS)
@@ -2587,45 +2589,36 @@ int s_k312_main(int argc, char **argv)
     STACK_OF(OPENSSL_STRING) *ssl_args = NULL;
     STACK_OF(X509_CRL) *crls = NULL;
     const SSL_METHOD *meth = TLS_client_method();
-    const char *CApath = NULL, *CAfile = NULL;
     char *cbuf = NULL, *sbuf = NULL;
     char *mbuf = NULL, *proxystr = NULL, *connectstr = NULL;
-    char *chCApath = NULL, *chCAfile = NULL, *host = NULL;
+    char  *host = NULL;
     char *port = OPENSSL_strdup(PORT);
     char *inrand = NULL;
-    char *vfyCApath = NULL, *vfyCAfile = NULL;
     struct timeval timeout, *timeoutp;
     fd_set readfds, writefds;
-    int noCApath = 0, noCAfile = 0;
     int build_chain = 0, cbuf_len, cbuf_off;
-    int key_format = FORMAT_PEM, crlf = 0, full_log = 1, mbuf_len = 0;
+    int key_format = FORMAT_PEM, full_log = 1, mbuf_len = 0;
     int prexit = 0;
     int reconnect = 0, verify = SSL_VERIFY_NONE, vpmtouched = 0;
     int ret = 1, in_init = 1, i, s = -1, k, width, state = 0;
     int sbuf_len, sbuf_off, cmdletters = 1;
     int socket_family = AF_UNSPEC, socket_type = SOCK_STREAM;
-    int starttls_proto = PROTO_OFF, crl_format = FORMAT_PEM, crl_download = 0;
+    int starttls_proto = PROTO_OFF, crl_format = FORMAT_PEM;
     int write_tty, read_tty, write_ssl, read_ssl, tty_on, ssl_pending;
 #if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
     int at_eof = 0;
 #endif
-    int read_buf_len = 0;
-    long randamt = 0;
     OPTION_CHOICE o;
     ENGINE *e = NULL;
 #ifndef OPENSSL_NO_NEXTPROTONEG
     const char *next_proto_neg_in = NULL;
 #endif
 #ifndef OPENSSL_NO_SRP
-    char *srppass = NULL;
     SRP_ARG srp_arg = { NULL, NULL, 0, 0, 0, 1024 };
-#endif
-#ifndef OPENSSL_NO_CT
-    char *ctlog_file = NULL;
 #endif
     int min_version = 0, max_version = 0, prot_opt = 0, no_prot_opt = 0;
     enum { use_inet, use_unix, use_unknown } connect_type = use_unknown;
-    int c_nbio = 0, c_msg = 0, c_ign_eof = 0;
+    int c_msg = 0, c_ign_eof = 0;
     BIO *bio_c_msg = NULL;
 
     FD_ZERO(&readfds);
@@ -2641,7 +2634,6 @@ int s_k312_main(int argc, char **argv)
     prog = opt_progname(argv[0]);
     c_quiet = 0;
     c_showcerts = 0;
-    c_nbio = 0;
     vpm = X509_VERIFY_PARAM_new();
     cctx = SSL_CONF_CTX_new();
 
@@ -2770,10 +2762,6 @@ int s_k312_main(int argc, char **argv)
         BIO_printf(bio_err,
                    "warning, not much extra random data, consider using the -rand option\n");
     }
-    if (inrand != NULL) {
-        randamt = app_RAND_load_files(inrand);
-        BIO_printf(bio_err, "%ld semi-random bytes loaded\n", randamt);
-    }
 
     if (bio_c_out == NULL) {
         if (c_quiet && !c_debug) {
@@ -2795,15 +2783,10 @@ int s_k312_main(int argc, char **argv)
     if (SSL_CTX_set_max_proto_version(ctx, max_version) == 0)
         goto end;
 
-    if (read_buf_len > 0) {
-        SSL_CTX_set_default_read_buffer_len(ctx, read_buf_len);
-    }
-
     if (!config_ctx(cctx, ssl_args, ctx))
         goto end;
 
     SSL_CTX_set_verify(ctx, verify, verify_callback);
-BIO_printf(bio_c_out, "CAfile=%s, CApath=%s, noCAfile=%x, noCApath=%x\n", CAfile, CApath, noCAfile, noCApath);
 
 
     con = SSL_new(ctx);
@@ -2816,13 +2799,6 @@ BIO_printf(bio_c_out, "CAfile=%s, CApath=%s, noCAfile=%x, noCApath=%x\n", CAfile
     }
     BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
-    if (c_nbio) {
-        if (!BIO_socket_nbio(s, 1)) {
-            ERR_print_errors(bio_err);
-            goto end;
-        }
-        BIO_printf(bio_c_out, "Turned on non blocking io\n");
-    }
         sbio = BIO_new_socket(s, BIO_NOCLOSE);
 
 
@@ -3055,29 +3031,9 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
                 goto shut;
             }
         }
-        else if (!ssl_pending && FD_ISSET(fileno_stdout(), &writefds))
-        {
-#ifdef CHARSET_EBCDIC
-            ascii2ebcdic(&(sbuf[sbuf_off]), &(sbuf[sbuf_off]), sbuf_len);
-#endif
-            i = raw_write_stdout(&(sbuf[sbuf_off]), sbuf_len);
-
-            if (i <= 0) {
-                BIO_printf(bio_c_out, "DONE\n");
-                ret = 0;
-                goto shut;
-                /* goto end; */
-            }
-
-            sbuf_len -= i;;
-            sbuf_off += i;
-            if (sbuf_len <= 0) {
-                read_ssl = 1;
-                write_tty = 0;
-            }
-        } else if (ssl_pending || FD_ISSET(SSL_get_fd(con), &readfds)) {
-printf("@@@@@ %s line=%d\n", __func__, __LINE__);
+         else if (ssl_pending || FD_ISSET(SSL_get_fd(con), &readfds)) {
             k = SSL_read(con, sbuf, BUFSIZZ /* BUFSIZZ */ );
+	printf("@@@@@ %s line=%d %s\n", __func__, __LINE__, sbuf);
 
             switch (SSL_get_error(con, k)) {
             case SSL_ERROR_NONE:
@@ -3127,63 +3083,6 @@ printf("@@@@@ %s line=%d\n", __func__, __LINE__);
                 goto shut;
                 /* break; */
             }
-        }
-/* OPENSSL_SYS_MSDOS includes OPENSSL_SYS_WINDOWS */
-        else if (FD_ISSET(fileno_stdin(), &readfds))
-        {
-            if (crlf) {
-                int j, lf_num;
-
-                i = raw_read_stdin(cbuf, BUFSIZZ / 2);
-                lf_num = 0;
-                /* both loops are skipped when i <= 0 */
-                for (j = 0; j < i; j++)
-                    if (cbuf[j] == '\n')
-                        lf_num++;
-                for (j = i - 1; j >= 0; j--) {
-                    cbuf[j + lf_num] = cbuf[j];
-                    if (cbuf[j] == '\n') {
-                        lf_num--;
-                        i++;
-                        cbuf[j + lf_num] = '\r';
-                    }
-                }
-                assert(lf_num == 0);
-            } else
-                i = raw_read_stdin(cbuf, BUFSIZZ);
-#if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
-            if (i == 0)
-                at_eof = 1;
-#endif
-
-            if ((!c_ign_eof) && ((i <= 0) || (cbuf[0] == 'Q' && cmdletters))) {
-                BIO_printf(bio_err, "DONE\n");
-                ret = 0;
-                goto shut;
-            }
-
-            if ((!c_ign_eof) && (cbuf[0] == 'R' && cmdletters)) {
-                BIO_printf(bio_err, "RENEGOTIATING\n");
-                SSL_renegotiate(con);
-                cbuf_len = 0;
-            }
-#ifndef OPENSSL_NO_HEARTBEATS
-            else if ((!c_ign_eof) && (cbuf[0] == 'B' && cmdletters)) {
-                BIO_printf(bio_err, "HEARTBEATING\n");
-                SSL_heartbeat(con);
-                cbuf_len = 0;
-            }
-#endif
-            else {
-                cbuf_len = i;
-                cbuf_off = 0;
-#ifdef CHARSET_EBCDIC
-                ebcdic2ascii(cbuf, cbuf, i);
-#endif
-            }
-
-            write_ssl = 1;
-            read_tty = 0;
         }
     }
 
