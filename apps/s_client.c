@@ -2587,29 +2587,25 @@ int s_k312_main(int argc, char **argv)
     STACK_OF(OPENSSL_STRING) *ssl_args = NULL;
     STACK_OF(X509_CRL) *crls = NULL;
     const SSL_METHOD *meth = TLS_client_method();
-    const char *CApath = NULL, *CAfile = NULL;
     char *cbuf = NULL, *sbuf = NULL;
     char *mbuf = NULL, *proxystr = NULL, *connectstr = NULL;
-    char *chCApath = NULL, *chCAfile = NULL, *host = NULL;
+    char  *host = NULL;
     char *port = OPENSSL_strdup(PORT);
     char *inrand = NULL;
-    char *vfyCApath = NULL, *vfyCAfile = NULL;
     struct timeval timeout, *timeoutp;
     fd_set readfds, writefds;
-    int noCApath = 0, noCAfile = 0;
     int build_chain = 0, cbuf_len, cbuf_off;
-    int key_format = FORMAT_PEM, crlf = 0, full_log = 1, mbuf_len = 0;
+    int key_format = FORMAT_PEM, full_log = 1, mbuf_len = 0;
     int prexit = 0;
     int reconnect = 0, verify = SSL_VERIFY_NONE, vpmtouched = 0;
     int ret = 1, in_init = 1, i, s = -1, k, width, state = 0;
     int sbuf_len, sbuf_off, cmdletters = 1;
     int socket_family = AF_UNSPEC, socket_type = SOCK_STREAM;
-    int starttls_proto = PROTO_OFF, crl_format = FORMAT_PEM, crl_download = 0;
+    int starttls_proto = PROTO_OFF, crl_format = FORMAT_PEM;
     int write_tty, read_tty, write_ssl, read_ssl, tty_on, ssl_pending;
 #if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
     int at_eof = 0;
 #endif
-    int read_buf_len = 0;
     long randamt = 0;
     OPTION_CHOICE o;
     ENGINE *e = NULL;
@@ -2617,15 +2613,11 @@ int s_k312_main(int argc, char **argv)
     const char *next_proto_neg_in = NULL;
 #endif
 #ifndef OPENSSL_NO_SRP
-    char *srppass = NULL;
     SRP_ARG srp_arg = { NULL, NULL, 0, 0, 0, 1024 };
-#endif
-#ifndef OPENSSL_NO_CT
-    char *ctlog_file = NULL;
 #endif
     int min_version = 0, max_version = 0, prot_opt = 0, no_prot_opt = 0;
     enum { use_inet, use_unix, use_unknown } connect_type = use_unknown;
-    int c_nbio = 0, c_msg = 0, c_ign_eof = 0;
+    int c_msg = 0, c_ign_eof = 0;
     BIO *bio_c_msg = NULL;
 
     FD_ZERO(&readfds);
@@ -2641,7 +2633,6 @@ int s_k312_main(int argc, char **argv)
     prog = opt_progname(argv[0]);
     c_quiet = 0;
     c_showcerts = 0;
-    c_nbio = 0;
     vpm = X509_VERIFY_PARAM_new();
     cctx = SSL_CONF_CTX_new();
 
@@ -2770,10 +2761,6 @@ int s_k312_main(int argc, char **argv)
         BIO_printf(bio_err,
                    "warning, not much extra random data, consider using the -rand option\n");
     }
-    if (inrand != NULL) {
-        randamt = app_RAND_load_files(inrand);
-        BIO_printf(bio_err, "%ld semi-random bytes loaded\n", randamt);
-    }
 
     if (bio_c_out == NULL) {
         if (c_quiet && !c_debug) {
@@ -2795,15 +2782,10 @@ int s_k312_main(int argc, char **argv)
     if (SSL_CTX_set_max_proto_version(ctx, max_version) == 0)
         goto end;
 
-    if (read_buf_len > 0) {
-        SSL_CTX_set_default_read_buffer_len(ctx, read_buf_len);
-    }
-
     if (!config_ctx(cctx, ssl_args, ctx))
         goto end;
 
     SSL_CTX_set_verify(ctx, verify, verify_callback);
-BIO_printf(bio_c_out, "CAfile=%s, CApath=%s, noCAfile=%x, noCApath=%x\n", CAfile, CApath, noCAfile, noCApath);
 
 
     con = SSL_new(ctx);
@@ -2816,13 +2798,6 @@ BIO_printf(bio_c_out, "CAfile=%s, CApath=%s, noCAfile=%x, noCApath=%x\n", CAfile
     }
     BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
-    if (c_nbio) {
-        if (!BIO_socket_nbio(s, 1)) {
-            ERR_print_errors(bio_err);
-            goto end;
-        }
-        BIO_printf(bio_c_out, "Turned on non blocking io\n");
-    }
         sbio = BIO_new_socket(s, BIO_NOCLOSE);
 
 
@@ -3131,25 +3106,6 @@ printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 /* OPENSSL_SYS_MSDOS includes OPENSSL_SYS_WINDOWS */
         else if (FD_ISSET(fileno_stdin(), &readfds))
         {
-            if (crlf) {
-                int j, lf_num;
-
-                i = raw_read_stdin(cbuf, BUFSIZZ / 2);
-                lf_num = 0;
-                /* both loops are skipped when i <= 0 */
-                for (j = 0; j < i; j++)
-                    if (cbuf[j] == '\n')
-                        lf_num++;
-                for (j = i - 1; j >= 0; j--) {
-                    cbuf[j + lf_num] = cbuf[j];
-                    if (cbuf[j] == '\n') {
-                        lf_num--;
-                        i++;
-                        cbuf[j + lf_num] = '\r';
-                    }
-                }
-                assert(lf_num == 0);
-            } else
                 i = raw_read_stdin(cbuf, BUFSIZZ);
 #if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
             if (i == 0)
