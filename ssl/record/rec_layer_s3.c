@@ -882,6 +882,7 @@ int ssl3_write_pending(SSL *s, int type, const unsigned char *buf,
     SSL3_BUFFER *wb = s->rlayer.wbuf;
     unsigned int currbuf = 0;
 
+printf("@@@@@ %s line=%d buf=%s\n", __func__, __LINE__, buf);
 /* XXXX */
     if ((s->rlayer.wpend_tot > (int)len)
         || ((s->rlayer.wpend_buf != buf) &&
@@ -905,6 +906,7 @@ int ssl3_write_pending(SSL *s, int type, const unsigned char *buf,
                           &(SSL3_BUFFER_get_buf(&wb[currbuf])
                             [SSL3_BUFFER_get_offset(&wb[currbuf])]),
                           (unsigned int)SSL3_BUFFER_get_left(&wb[currbuf]));
+			printf("@@@@@ %s line=%d BIO_write buf=%s\n", __func__, __LINE__, &(SSL3_BUFFER_get_buf(&wb[currbuf])[SSL3_BUFFER_get_offset(&wb[currbuf])]));
         } else {
             SSLerr(SSL_F_SSL3_WRITE_PENDING, SSL_R_BIO_NOT_SET);
             i = -1;

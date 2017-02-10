@@ -129,6 +129,7 @@ int tls1_change_cipher_state(SSL *s, int which)
     comp = s->s3->tmp.new_compression;
 #endif
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (which & SSL3_CC_READ) {
         if (s->s3->tmp.new_cipher->algorithm2 & TLS1_STREAM_MAC)
             s->mac_flags |= SSL_MAC_FLAG_READ_MAC_STREAM;
@@ -364,6 +365,7 @@ int tls1_setup_key_block(SSL *s)
     int mac_type = NID_undef, mac_secret_size = 0;
     int ret = 0;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (s->s3->tmp.key_block_length != 0)
         return (1);
 
@@ -454,6 +456,7 @@ int tls1_final_finish_mac(SSL *s, const char *str, int slen, unsigned char *out)
     int hashlen;
     unsigned char hash[EVP_MAX_MD_SIZE];
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!ssl3_digest_cached_records(s, 0))
         return 0;
 
@@ -473,6 +476,7 @@ int tls1_final_finish_mac(SSL *s, const char *str, int slen, unsigned char *out)
 int tls1_generate_master_secret(SSL *s, unsigned char *out, unsigned char *p,
                                 int len)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (s->session->flags & SSL_SESS_FLAG_EXTMS) {
         unsigned char hash[EVP_MAX_MD_SIZE * 2];
         int hashlen;
@@ -552,6 +556,7 @@ int tls1_export_keying_material(SSL *s, unsigned char *out, size_t olen,
      * than passing separate values into the TLS PRF to ensure that the
      * concatenation of values does not create a prohibited label.
      */
+		printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     vallen = llen + SSL3_RANDOM_SIZE * 2;
     if (use_context) {
         vallen += 2 + contextlen;
@@ -623,6 +628,7 @@ int tls1_export_keying_material(SSL *s, unsigned char *out, size_t olen,
 
 int tls1_alert_code(int code)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     switch (code) {
     case SSL_AD_CLOSE_NOTIFY:
         return (SSL3_AD_CLOSE_NOTIFY);

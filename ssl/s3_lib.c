@@ -2778,6 +2778,7 @@ const SSL_CIPHER *ssl3_get_cipher(unsigned int u)
 
 int ssl3_set_handshake_header(SSL *s, int htype, unsigned long len)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     unsigned char *p = (unsigned char *)s->init_buf->data;
     *(p++) = htype;
     l2n3(len, p);
@@ -2789,6 +2790,7 @@ int ssl3_set_handshake_header(SSL *s, int htype, unsigned long len)
 
 int ssl3_handshake_write(SSL *s)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return ssl3_do_write(s, SSL3_RT_HANDSHAKE);
 }
 
