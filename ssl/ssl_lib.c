@@ -507,6 +507,7 @@ int SSL_CTX_set_ssl_version(SSL_CTX *ctx, const SSL_METHOD *meth)
 
     ctx->method = meth;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     sk = ssl_create_cipher_list(ctx->method, &(ctx->cipher_list),
                                 &(ctx->cipher_list_by_id),
                                 SSL_DEFAULT_CIPHER_LIST, ctx->cert);
@@ -2009,6 +2010,7 @@ int SSL_CTX_set_cipher_list(SSL_CTX *ctx, const char *str)
 {
     STACK_OF(SSL_CIPHER) *sk;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     sk = ssl_create_cipher_list(ctx->method, &ctx->cipher_list,
                                 &ctx->cipher_list_by_id, str, ctx->cert);
     /*
@@ -2032,6 +2034,7 @@ int SSL_set_cipher_list(SSL *s, const char *str)
 {
     STACK_OF(SSL_CIPHER) *sk;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     sk = ssl_create_cipher_list(s->ctx->method, &s->cipher_list,
                                 &s->cipher_list_by_id, str, s->cert);
     /* see comment in SSL_CTX_set_cipher_list */
@@ -2348,6 +2351,7 @@ SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)
 {
     SSL_CTX *ret = NULL;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (meth == NULL) {
         SSLerr(SSL_F_SSL_CTX_NEW, SSL_R_NULL_SSL_METHOD_PASSED);
         return (NULL);

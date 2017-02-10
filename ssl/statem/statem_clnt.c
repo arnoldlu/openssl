@@ -709,6 +709,7 @@ int tls_construct_client_hello(SSL *s)
 #endif
     SSL_SESSION *sess = s->session;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     buf = (unsigned char *)s->init_buf->data;
 
     /* Work out what SSL/TLS/DTLS version to use */
@@ -885,6 +886,7 @@ MSG_PROCESS_RETURN dtls_process_hello_verify(SSL *s, PACKET *pkt)
     unsigned int cookie_len;
     PACKET cookiepkt;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!PACKET_forward(pkt, 2)
         || !PACKET_get_length_prefixed_1(pkt, &cookiepkt)) {
         al = SSL_AD_DECODE_ERROR;
@@ -928,6 +930,7 @@ MSG_PROCESS_RETURN tls_process_server_hello(SSL *s, PACKET *pkt)
     SSL_COMP *comp;
 #endif
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!PACKET_get_net_2(pkt, &sversion)) {
         al = SSL_AD_DECODE_ERROR;
         SSLerr(SSL_F_TLS_PROCESS_SERVER_HELLO, SSL_R_LENGTH_MISMATCH);
@@ -1192,6 +1195,7 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
     STACK_OF(X509) *sk = NULL;
     EVP_PKEY *pkey = NULL;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if ((sk = sk_X509_new_null()) == NULL) {
         SSLerr(SSL_F_TLS_PROCESS_SERVER_CERTIFICATE, ERR_R_MALLOC_FAILURE);
         goto err;
@@ -1625,6 +1629,7 @@ MSG_PROCESS_RETURN tls_process_key_exchange(SSL *s, PACKET *pkt)
 
     save_param_start = *pkt;
 
+printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 #if !defined(OPENSSL_NO_EC) || !defined(OPENSSL_NO_DH)
     EVP_PKEY_free(s->s3->peer_tmp);
     s->s3->peer_tmp = NULL;
@@ -1911,6 +1916,7 @@ MSG_PROCESS_RETURN tls_process_new_session_ticket(SSL *s, PACKET *pkt)
     unsigned int ticklen;
     unsigned long ticket_lifetime_hint;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!PACKET_get_net_4(pkt, &ticket_lifetime_hint)
         || !PACKET_get_net_2(pkt, &ticklen)
         || PACKET_remaining(pkt) != ticklen) {
@@ -1994,6 +2000,7 @@ MSG_PROCESS_RETURN tls_process_cert_status(SSL *s, PACKET *pkt)
     unsigned long resplen;
     unsigned int type;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!PACKET_get_1(pkt, &type)
         || type != TLSEXT_STATUSTYPE_ocsp) {
         al = SSL_AD_DECODE_ERROR;
@@ -2027,6 +2034,7 @@ MSG_PROCESS_RETURN tls_process_cert_status(SSL *s, PACKET *pkt)
 
 MSG_PROCESS_RETURN tls_process_server_done(SSL *s, PACKET *pkt)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (PACKET_remaining(pkt) > 0) {
         /* should contain no data */
         ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
@@ -2519,6 +2527,7 @@ int tls_construct_client_key_exchange(SSL *s)
 
     alg_k = s->s3->tmp.new_cipher->algorithm_mkey;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     p = ssl_handshake_start(s);
 
     if ((alg_k & SSL_PSK)
@@ -2646,6 +2655,7 @@ int tls_construct_client_verify(SSL *s)
     long hdatalen = 0;
     void *hdata;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     mctx = EVP_MD_CTX_new();
     if (mctx == NULL) {
         SSLerr(SSL_F_TLS_CONSTRUCT_CLIENT_VERIFY, ERR_R_MALLOC_FAILURE);
@@ -2807,6 +2817,7 @@ WORK_STATE tls_prepare_client_certificate(SSL *s, WORK_STATE wst)
 
 int tls_construct_client_certificate(SSL *s)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!ssl3_output_cert_chain(s,
                                 (s->s3->tmp.cert_req ==
                                  2) ? NULL : s->cert->key)) {
@@ -2900,6 +2911,7 @@ int tls_construct_next_proto(SSL *s)
     unsigned int len, padding_len;
     unsigned char *d;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     len = s->next_proto_negotiated_len;
     padding_len = 32 - ((len + 2) % 32);
     d = (unsigned char *)s->init_buf->data;

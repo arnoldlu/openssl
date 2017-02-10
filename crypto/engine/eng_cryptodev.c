@@ -823,6 +823,7 @@ static int
 cryptodev_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
                          const int **nids, int nid)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!cipher)
         return (cryptodev_usable_ciphers(nids));
 
@@ -1138,6 +1139,7 @@ static int
 cryptodev_engine_digests(ENGINE *e, const EVP_MD **digest,
                          const int **nids, int nid)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (!digest)
         return (cryptodev_usable_digests(nids));
 
@@ -1159,6 +1161,7 @@ cryptodev_engine_digests(ENGINE *e, const EVP_MD **digest,
 
 static int cryptodev_engine_destroy(ENGINE *e)
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     EVP_CIPHER_meth_free(rc4_cipher);
     rc4_cipher = NULL;
     EVP_CIPHER_meth_free(des_cbc_cipher);
@@ -1637,6 +1640,7 @@ cryptodev_dh_compute_key(unsigned char *key, const BIGNUM *pub_key, DH *dh)
 static int
 cryptodev_ctrl(ENGINE *e, int cmd, long i, void *p, void (*f) (void))
 {
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 # ifdef HAVE_SYSLOG_R
     struct syslog_data sd = SYSLOG_DATA_INIT;
 # endif
@@ -1658,6 +1662,7 @@ void engine_load_cryptodev_int(void)
     ENGINE *engine = ENGINE_new();
     int fd;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (engine == NULL)
         return;
     if ((fd = get_dev_crypto()) < 0) {

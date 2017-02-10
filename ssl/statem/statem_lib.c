@@ -63,6 +63,7 @@ int tls_construct_finished(SSL *s, const char *sender, int slen)
     int i;
     unsigned long l;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     p = ssl_handshake_start(s);
 
     i = s->method->ssl3_enc->final_finish_mac(s,
@@ -130,6 +131,7 @@ MSG_PROCESS_RETURN tls_process_change_cipher_spec(SSL *s, PACKET *pkt)
     int al;
     long remain;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     remain = PACKET_remaining(pkt);
     /*
      * 'Change Cipher Spec' is just a single byte, which should already have
@@ -196,6 +198,7 @@ MSG_PROCESS_RETURN tls_process_finished(SSL *s, PACKET *pkt)
 {
     int al, i;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     /* If this occurs, we have missed a message */
     if (!s->s3->change_cipher_spec) {
         al = SSL_AD_UNEXPECTED_MESSAGE;
@@ -242,6 +245,7 @@ int tls_construct_change_cipher_spec(SSL *s)
 {
     unsigned char *p;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     p = (unsigned char *)s->init_buf->data;
     *p = SSL3_MT_CCS;
     s->init_num = 1;

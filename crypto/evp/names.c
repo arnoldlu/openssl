@@ -18,6 +18,11 @@ int EVP_add_cipher(const EVP_CIPHER *c)
 {
     int r;
 
+if(c!= NULL && OBJ_nid2sn(c->nid) != NULL)
+	printf("@@@@@ %s line=%d cipher name=%s\n", __func__, __LINE__, OBJ_nid2sn(c->nid));
+else
+	printf("@@@@@ %s line=%d cipher name=NULL\n", __func__, __LINE__);
+
     if (c == NULL)
         return 0;
 
@@ -36,6 +41,7 @@ int EVP_add_digest(const EVP_MD *md)
     const char *name;
 
     name = OBJ_nid2sn(md->type);
+	printf("@@@@@ %s line=%d digest name=%s\n", __func__, __LINE__, name);
     r = OBJ_NAME_add(name, OBJ_NAME_TYPE_MD_METH, (const char *)md);
     if (r == 0)
         return (0);

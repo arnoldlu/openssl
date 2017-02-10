@@ -17,6 +17,7 @@
 void openssl_add_all_ciphers_int(void)
 {
 
+printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 #ifndef OPENSSL_NO_DES
     EVP_add_cipher(EVP_des_cfb());
     EVP_add_cipher(EVP_des_cfb1());

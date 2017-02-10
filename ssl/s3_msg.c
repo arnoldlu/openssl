@@ -16,6 +16,7 @@ int ssl3_do_change_cipher_spec(SSL *s)
     const char *sender;
     int slen;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (s->server)
         i = SSL3_CHANGE_CIPHER_SERVER_READ;
     else

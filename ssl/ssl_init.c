@@ -28,6 +28,7 @@ DEFINE_RUN_ONCE_STATIC(ossl_init_ssl_base)
     fprintf(stderr, "OPENSSL_INIT: ossl_init_ssl_base: "
             "Adding SSL ciphers and digests\n");
 #endif
+printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 #ifndef OPENSSL_NO_DES
     EVP_add_cipher(EVP_des_cbc());
     EVP_add_cipher(EVP_des_ede3_cbc());
@@ -178,6 +179,7 @@ int OPENSSL_init_ssl(uint64_t opts, const OPENSSL_INIT_SETTINGS * settings)
 {
     static int stoperrset = 0;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (stopped) {
         if (!stoperrset) {
             /*

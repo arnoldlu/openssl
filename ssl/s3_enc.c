@@ -116,6 +116,7 @@ int ssl3_change_cipher_state(SSL *s, int which)
     int n, i, j, k, cl;
     int reuse_dd = 0;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     c = s->s3->tmp.new_sym_enc;
     m = s->s3->tmp.new_hash;
     /* m == NULL will lead to a crash later */

@@ -58,6 +58,8 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                       ENGINE *impl, const unsigned char *key,
                       const unsigned char *iv, int enc)
 {
+if(cipher != NULL && OBJ_nid2ln(cipher->nid) != NULL)
+	printf("@@@@@ %s line=%d cipher name=%s\n", __func__, __LINE__, OBJ_nid2ln(cipher->nid));
     if (enc == -1)
         enc = ctx->encrypt;
     else {
@@ -295,6 +297,7 @@ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl,
 {
     int i, j, bl;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     bl = ctx->cipher->block_size;
 
     if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {

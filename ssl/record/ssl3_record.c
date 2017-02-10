@@ -573,6 +573,7 @@ int ssl3_enc(SSL *s, SSL3_RECORD *inrecs, unsigned int n_recs, int send)
     int bs, i, mac_size = 0;
     const EVP_CIPHER *enc;
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     rec = inrecs;
     /*
      * We shouldn't ever be called with more than one record in the SSLv3 case

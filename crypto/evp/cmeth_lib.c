@@ -74,6 +74,7 @@ int EVP_CIPHER_meth_set_do_cipher(EVP_CIPHER *cipher,
                                                     const unsigned char *in,
                                                     size_t inl))
 {
+	printf("@@@@@ %s line=%d cipher name=%s\n", __func__, __LINE__, OBJ_nid2ln(cipher->nid));
     cipher->do_cipher = do_cipher;
     return 1;
 }

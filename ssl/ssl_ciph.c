@@ -680,6 +680,7 @@ static void ssl_cipher_collect_ciphers(const SSL_METHOD *ssl_method,
      * entries.
      */
 
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     /* Get the initial list of ciphers */
     co_list_num = 0;            /* actual count of ciphers */
     for (i = 0; i < num_of_ciphers; i++) {

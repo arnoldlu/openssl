@@ -2159,7 +2159,7 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
                     print_ssl_summary(con);
                 }
 
-                //print_stuff(bio_c_out, con, full_log);
+                print_stuff(bio_c_out, con, full_log);
                 if (full_log > 0)
                     full_log--;
 
@@ -2258,7 +2258,8 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         }
 
         if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
-	#define HTTP_HEADERS "GET / HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: OpenSSL\r\n\r\n"
+//#define HTTP_HEADERS "GET / HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: OpenSSL\r\n\r\n"
+#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=64f6727624c14a428fc394bc766c2fa7&Sourport=10086&Qrytype=channel\r\n HTTP/1.1\r\n\r\n"
 	strcpy(cbuf, HTTP_HEADERS);
 	cbuf_len = strlen(cbuf);
             k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
