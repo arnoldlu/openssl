@@ -910,8 +910,8 @@ iv=D1 7C CF BF
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_Cipher line=183
-@@@@@ aes_gcm_cipher line=1649 out=1¢ì°¥ºFá	›´1Æbˆv]Ö¦ØøP¼7€âA»äÃËi´¦ßñÛ“İkß9GtÈû)ßó‹FñŒï„—÷:z²ù]RÀá£ÁÉá¨3GU¤„‘Ng°ÉÖ¡HŒc7LgF°­³‚ key_set=1 tls_aad_len=13
-@@@@@ aes_gcm_cipher line=1651 in=1¢ì°¥ºFá	›´1Æbˆv]Ö¦ØøP¼7€âA»äÃËi´¦ßñÛ“İkß9GtÈû)ßó‹FñŒï„—÷:z²ù]RÀá£ÁÉá¨3GU¤„‘Ng°ÉÖ¡HŒc7LgF°­³‚
+@@@@@ aes_gcm_cipher line=1649 out=Â1Â¢Ã¬Â°Â¥ÂºFÃ¡	Â›Â´1Ã†bÂˆv]Ã–Â¦Ã˜Ã¸PÂ¼7Â€Ã¢AÂ»Ã¤ÃƒÃ‹iÂ´Â¦ÃŸÃ±Ã›Â“ÃkÃŸ9GtÃˆÃ»)ÃŸÃ³Â‹FÃ±ÂŒÃ¯Â„Â—Ã·:zÂ²Ã¹]RÃ€Ã¡Â£ÃÃ‰Ã¡Â¨Â3GUÂ¤Â„Â‘NgÂ°Ã‰Ã–Â¡HÂŒc7LgFÂ°Â­Â³Â‚ key_set=1 tls_aad_len=13
+@@@@@ aes_gcm_cipher line=1651 in=Â1Â¢Ã¬Â°Â¥ÂºFÃ¡	Â›Â´1Ã†bÂˆv]Ã–Â¦Ã˜Ã¸PÂ¼7Â€Ã¢AÂ»Ã¤ÃƒÃ‹iÂ´Â¦ÃŸÃ±Ã›Â“ÃkÃŸ9GtÃˆÃ»)ÃŸÃ³Â‹FÃ±ÂŒÃ¯Â„Â—Ã·:zÂ²Ã¹]RÃ€Ã¡Â£ÃÃ‰Ã¡Â¨Â3GUÂ¤Â„Â‘NgÂ°Ã‰Ã–Â¡HÂŒc7LgFÂ°Â­Â³Â‚
 @@@@@ aes_gcm_tls_cipher line=1525
 @@@@@ aes_gcm_tls_cipher line=1588  Decrypt payload
 @@@@@ EV
@@ -939,8 +939,8 @@ User-Agent: OpenSSL
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_Cipher line=183
-@@@@@ aes_gcm_cipher line=1649 out=X… key_set=1 tls_aad_len=13
-@@@@@ aes_gcm_cipher line=1651 in=X…
+@@@@@ aes_gcm_cipher line=1649 out=XÂ… key_set=1 tls_aad_len=13
+@@@@@ aes_gcm_cipher line=1651 in=XÂ…
 @@@@@ aes_gcm_tls_cipher line=1525
 @@@@@ aes_gcm_tls_cipher line=1546  Encrypt payload
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
@@ -966,8 +966,8 @@ User-Agent: OpenSSL
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_Cipher line=183
-@@@@@ aes_gcm_cipher line=1649 out=1¢ì°¦ŠRÍVSK|‹Oñ2u>ÚóÑ~ÊçN™èD\$…F¡ÊÃ¸Í key_set=1 tls_aad_len=13
-@@@@@ aes_gcm_cipher line=1651 in=1¢ì°¦ŠRÍVSK|‹Oñ2u>ÚóÑ~ÊçN™èD\$…F¡ÊÃ¸Í
+@@@@@ aes_gcm_cipher line=1649 out=Â1Â¢Ã¬Â°Â¦ÂŠRÃVSK|Â‹OÃ±2u>ÃšÃ³Ã‘~ÃŠÃ§NÂ™Ã¨D\$Â…FÂ¡ÃŠÃƒÂ¸Ã key_set=1 tls_aad_len=13
+@@@@@ aes_gcm_cipher line=1651 in=Â1Â¢Ã¬Â°Â¦ÂŠRÃVSK|Â‹OÃ±2u>ÃšÃ³Ã‘~ÃŠÃ§NÂ™Ã¨D\$Â…FÂ¡ÃŠÃƒÂ¸Ã
 @@@@@ aes_gcm_tls_cipher line=1525
 @@@@@ aes_gcm_tls_cipher line=1588  Decrypt payload
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
@@ -1085,7 +1085,7 @@ Set-Cookie: __bsi=2950756783501160105_00_9_N_N_2_0303_C02F_N_N_N_0; expires=Mon,
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_Cipher line=183
-@@@@@ aes_gcm_cipher line=1649 out=1¢ì°§à^æåÈµŸLã¿Æf)C5Herver: bfe/1.0.8.18
+@@@@@ aes_gcm_cipher line=1649 out=Â1Â¢Ã¬Â°Â§Ã ^Ã¦Ã¥ÃˆÂµÂŸLÃ£Â¿Ã†f)C5Herver: bfe/1.0.8.18
 Date: Mon, 13 Feb 2017 09:10:06 GMT
 Content-Type: text/html
 Content-Length: 227
@@ -1111,9 +1111,9 @@ Set-Cookie: __bsi=2950756783501160105_00_9_N_N_2_0303_C02F_N_N_N_0; expires=Mon,
 <body>
 	<noscript><meta http-equiv="refresh" content="0;url=http://www.baidu.com/"></noscript>
 </body>
-</html>9ØírjÛY ˆ.d#AAU Z0X0Vg0L0#+https://d.symcb.com/cps0%+0https://d.symcb.com/rpa0U#0€_`ÏaUß„CŠ`*²õzôCï0+U$0"0   †http://ss.symcb.com/ss.crl0W+K0I0+0†http://ss.symcd.com0&+0†http://ss.symcb.com/ss.crt0‚
-+Öyöó key_set=1 tls_aad_len=13
-@@@@@ aes_gcm_cipher line=1651 in=1¢ì°§à^æåÈµŸLã¿Æf)C5Herver: bfe/1.0.8.18
+</html>9Ã˜Ã­rjÃ›Y ÂÂˆ.dÂ#AAU Z0X0VgÂ0L0#+https://d.symcb.com/cps0%+0https://d.symcb.com/rpa0U#0Â€_`ÃaÂUÃŸÂ„CÂŠ`*Â²ÃµzÃ´CÃ¯0+U$0"0 Â Â Â†http://ss.symcb.com/ss.crl0W+K0I0+0Â†http://ss.symcd.com0&+0Â†http://ss.symcb.com/ss.crt0Â‚
++Ã–yÂÃ¶ÂÃ³ key_set=1 tls_aad_len=13
+@@@@@ aes_gcm_cipher line=1651 in=Â1Â¢Ã¬Â°Â§Ã ^Ã¦Ã¥ÃˆÂµÂŸLÃ£Â¿Ã†f)C5Herver: bfe/1.0.8.18
 Date: Mon, 13 Feb 2017 09:10:06 GMT
 Content-Type: text/html
 Content-Length: 227
@@ -1139,8 +1139,8 @@ Set-Cookie: __bsi=2950756783501160105_00_9_N_N_2_0303_C02F_N_N_N_0; expires=Mon,
 <body>
 	<noscript><meta http-equiv="refresh" content="0;url=http://www.baidu.com/"></noscript>
 </body>
-</html>9ØírjÛY ˆ.d#AAU Z0X0Vg0L0#+https://d.symcb.com/cps0%+0https://d.symcb.com/rpa0U#0€_`ÏaUß„CŠ`*²õzôCï0+U$0"0   †http://ss.symcb.com/ss.crl0W+K0I0+0†http://ss.symcd.com0&+0†http://ss.symcb.com/ss.crt0‚
-+Öyöó
+</html>9Ã˜Ã­rjÃ›Y ÂÂˆ.dÂ#AAU Z0X0VgÂ0L0#+https://d.symcb.com/cps0%+0https://d.symcb.com/rpa0U#0Â€_`ÃaÂUÃŸÂ„CÂŠ`*Â²ÃµzÃ´CÃ¯0+U$0"0 Â Â Â†http://ss.symcb.com/ss.crl0W+K0I0+0Â†http://ss.symcd.com0&+0Â†http://ss.symcb.com/ss.crt0Â‚
++Ã–yÂÃ¶ÂÃ³
 @@@@@ aes_gcm_tls_cipher line=1525
 @@@@@ aes_gcm_tls_cipher line=1588  Decrypt payload
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
@@ -1157,8 +1157,8 @@ closed
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
 @@@@@ EVP_Cipher line=183
-@@@@@ aes_gcm_cipher line=1649 out=X… key_set=1 tls_aad_len=13
-@@@@@ aes_gcm_cipher line=1651 in=X…
+@@@@@ aes_gcm_cipher line=1649 out=XÂ… key_set=1 tls_aad_len=13
+@@@@@ aes_gcm_cipher line=1651 in=XÂ…
 @@@@@ aes_gcm_tls_cipher line=1525
 @@@@@ aes_gcm_tls_cipher line=1546  Encrypt payload
 @@@@@ EVP_CIPHER_CTX_cipher line=189 cipher name=aes-128-gcm
