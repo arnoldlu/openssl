@@ -1207,6 +1207,7 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
         SSLerr(SSL_F_TLS_PROCESS_SERVER_CERTIFICATE, SSL_R_LENGTH_MISMATCH);
         goto f_err;
     }
+	printf("@@@@@ %s line=%d, cert_list_len=%d\n", __func__, __LINE__, cert_list_len);
     while (PACKET_remaining(pkt)) {
         if (!PACKET_get_net_3(pkt, &cert_len)
             || !PACKET_get_bytes(pkt, &certbytes, cert_len)) {
@@ -1215,6 +1216,7 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
                    SSL_R_CERT_LENGTH_MISMATCH);
             goto f_err;
         }
+		printf("@@@@@ %s line=%d, cert_list_len=%d\n", __func__, __LINE__, cert_len);
 
         certstart = certbytes;
         x = d2i_X509(NULL, (const unsigned char **)&certbytes, cert_len);
@@ -1237,6 +1239,7 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
     }
 
     i = ssl_verify_cert_chain(s, sk);
+printf("@@@@@ %s line=%d, i=%d\n", __func__, __LINE__, i);
     /*
      * The documented interface is that SSL_VERIFY_PEER should be set in order
      * for client side verification of the server certificate to take place.
@@ -1286,6 +1289,7 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
     }
 
     i = ssl_cert_type(x, pkey);
+	printf("@@@@@ %s line=%d cert type=%d\n", __func__, __LINE__, i);
     if (i < 0) {
         x = NULL;
         al = SSL3_AL_FATAL;
@@ -1295,6 +1299,7 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
     }
 
     exp_idx = ssl_cipher_get_cert_index(s->s3->tmp.new_cipher);
+	printf("@@@@@ %s line=%d exp_idx=%d\n", __func__, __LINE__, exp_idx);
     if (exp_idx >= 0 && i != exp_idx
         && (exp_idx != SSL_PKEY_GOST_EC ||
             (i != SSL_PKEY_GOST12_512 && i != SSL_PKEY_GOST12_256
@@ -1311,6 +1316,9 @@ MSG_PROCESS_RETURN tls_process_server_certificate(SSL *s, PACKET *pkt)
     X509_up_ref(x);
     s->session->peer = x;
     s->session->verify_result = s->verify_result;
+printf("@@@@@ %s line=%d peer_type=%d\n", __func__, __LINE__, s->session->peer_type);
+printf("@@@@@ %s line=%d peer=%d\n", __func__, __LINE__, s->session->peer);
+printf("@@@@@ %s line=%d verify_result=%d\n", __func__, __LINE__, s->session->verify_result);
 
     x = NULL;
     ret = MSG_PROCESS_CONTINUE_READING;
@@ -1629,7 +1637,7 @@ MSG_PROCESS_RETURN tls_process_key_exchange(SSL *s, PACKET *pkt)
 
     save_param_start = *pkt;
 
-printf("@@@@@ %s line=%d\n", __func__, __LINE__);
+printf("@@@@@ %s line=%d alg_k=0x%08x\n", __func__, __LINE__, alg_k);
 #if !defined(OPENSSL_NO_EC) || !defined(OPENSSL_NO_DH)
     EVP_PKEY_free(s->s3->peer_tmp);
     s->s3->peer_tmp = NULL;
@@ -1657,6 +1665,11 @@ printf("@@@@@ %s line=%d\n", __func__, __LINE__);
         goto err;
     }
 
+if(pkey == NULL)
+	printf("@@@@@ %s line=%d pkey == NULL\n", __func__, __LINE__);
+else
+	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
+	
     /* if it was signed, check the signature */
     if (pkey != NULL) {
         PACKET params;
@@ -2527,7 +2540,7 @@ int tls_construct_client_key_exchange(SSL *s)
 
     alg_k = s->s3->tmp.new_cipher->algorithm_mkey;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
+	printf("@@@@@ %s line=%d alg_k=0x%08x\n", __func__, __LINE__, alg_k);
     p = ssl_handshake_start(s);
 
     if ((alg_k & SSL_PSK)
@@ -2587,6 +2600,7 @@ int tls_client_key_exchange_post_work(SSL *s)
     pms = s->s3->tmp.pms;
     pmslen = s->s3->tmp.pmslen;
 
+printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 #ifndef OPENSSL_NO_SRP
     /* Check for SRP */
     if (s->s3->tmp.new_cipher->algorithm_mkey & SSL_kSRP) {
@@ -2844,6 +2858,7 @@ int ssl3_check_cert_and_algorithm(SSL *s)
 
     alg_k = s->s3->tmp.new_cipher->algorithm_mkey;
     alg_a = s->s3->tmp.new_cipher->algorithm_auth;
+	printf("@@@@@ %s line=%d alg_k=0x%08x alg_a=0x%08x\n", __func__, __LINE__, alg_k, alg_a);
 
     /* we don't have a certificate */
     if ((alg_a & SSL_aNULL) || (alg_k & SSL_kPSK))
