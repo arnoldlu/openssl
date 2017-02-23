@@ -783,6 +783,54 @@ static void freeandcopy(char **dest, const char *source)
 #define CHK_ERR(err,s) if ((err)==-1) { perror(s); exit(1); }
 #define CHK_SSL(err) if ((err)==-1) { ERR_print_errors_fp(stderr); exit(2); }
 
+void get_url_data(BIO *sbio, char *url)
+{
+	char *mbuf = NULL;
+	int mbuf_len = 0;
+	int s = -1;
+
+	enum {
+		error_proto,	 /* Wrong protocol, not even HTTP */
+		error_connect,	 /* CONNECT failed */
+		success
+	} foundit = error_connect;
+	printf("@@@@@ %s line=%d url=%s\n", __func__, __LINE__, url);
+	mbuf = app_malloc(BUFSIZZ, "url");
+	//sbio = BIO_new_socket(s, BIO_NOCLOSE);
+
+	BIO *fbio = BIO_new(BIO_f_buffer());
+
+	BIO_push(fbio, sbio);
+	BIO_printf(fbio, "%s", url);
+	(void)BIO_flush(fbio);
+	/*
+	* The first line is the HTTP response.  According to RFC 7230,
+	* it's formated exactly like this:
+	*
+	* HTTP/d.d ddd Reason text\r\n
+	*/
+	mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+	printf("@@@@@ mbuf=%s mbuf_len=%d\n", mbuf, mbuf_len);
+	if (mbuf[8] != ' ') {
+		printf("%s: HTTP CONNECT failed, incorrect response from proxy\n", prog);
+		foundit = error_proto;
+	} else if (mbuf[9] != '2') {
+		printf("%s: HTTP CONNECT failed: %s ", prog,&mbuf[9]);
+	} else {
+		foundit = success;
+	}
+	if (foundit != error_proto) {
+	/* Read past all following headers */
+		do {
+			mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+		} while (mbuf_len > 2);
+	}
+           (void)BIO_flush(fbio);
+           BIO_pop(fbio);
+           BIO_free(fbio);
+	OPENSSL_clear_free(mbuf, BUFSIZZ);
+}
+
 int s_client_main(int argc, char **argv)
 {
     BIO *sbio;
@@ -2022,7 +2070,9 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
             BIO *fbio = BIO_new(BIO_f_buffer());
 
             BIO_push(fbio, sbio);
-            BIO_printf(fbio, "CONNECT %s HTTP/1.0\r\n\r\n", connectstr);
+            //BIO_printf(fbio, "CONNECT %s HTTP/1.0\r\n\r\n", connectstr);
+            BIO_printf(fbio, "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\n    Host: admin.omsg.cn\r\n    Referer: http://10.41.70.100/ac_portal/zte_webauth/pc.html?templete=zte_webauth&tabs=pwd&vlanid=0&url=http://admin.omsg.cn%2finuploadpic%2f2016121034000012.png    Connection: Keep-Alive\r\n\r\n");
+
             (void)BIO_flush(fbio);
             /*
              * The first line is the HTTP response.  According to RFC 7230,
@@ -2050,6 +2100,7 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
                 } while (mbuf_len > 2);
             }
             (void)BIO_flush(fbio);
+
             BIO_pop(fbio);
             BIO_free(fbio);
             if (foundit != success) {
@@ -2119,6 +2170,9 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
             }
         }
     }
+	//	get_url_data(sbio, "GET http://admin.omsg.cn HTTP/1.1\r\n	 Accept: */* \r\n	 Host: admin.omsg.cn\r\n	Connection: Close\r\n	 Proxy-Connection: Keep-Alive\r\n\r\n");
+	//get_url_data(sbio, "CONNECT http://admin.omsg.cn:80 HTTP/1.0\r\n\r\n");
+	//get_url_data(sbio, "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\n    Accept: */* \r\n    Host: admin.omsg.cn\r\n    Connection: Close\r\n    Proxy-Connection: Keep-Alive\r\n\r\n");
 
     for (;;) {
         FD_ZERO(&readfds);
