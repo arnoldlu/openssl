@@ -2031,7 +2031,6 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
              * HTTP/d.d ddd Reason text\r\n
              */
             mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-	BIO_printf(bio_c_out, "@@@@@ mbuf=%s\n", mbuf);
             if (mbuf[8] != ' ') {
                 BIO_printf(bio_err,
                            "%s: HTTP CONNECT failed, incorrect response "
@@ -2258,8 +2257,7 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         }
 
         if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
-//#define HTTP_HEADERS "GET / HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: OpenSSL\r\n\r\n"
-#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&Sourport=10086&Qrytype=channel\r\n HTTP/1.1\r\n\r\n"
+	#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&Sourport=10086&Qrytype=channel\r\n HTTP/1.1\r\n\r\n"
 	strcpy(cbuf, HTTP_HEADERS);
 	cbuf_len = strlen(cbuf);
             k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
@@ -2408,7 +2406,7 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
                     BIO_printf(bio_err, "read:errno=%d\n", ret);
                 goto shut;
             case SSL_ERROR_ZERO_RETURN:
-                BIO_printf(bio_c_out, "\nclosed\n");
+                BIO_printf(bio_c_out, "closed\n");
                 ret = 0;
                 goto shut;
             case SSL_ERROR_WANT_ASYNC_JOB:
@@ -2484,49 +2482,9 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
     }
 
     ret = 0;
-
  shut:
     if (in_init)
         print_stuff(bio_c_out, con, full_log);
-
-#if 0
-	BIO_printf(bio_c_out, "@@@@@ Start Arnold's private test. @@@@@\n");
-#if 1
-	X509*	 server_cert;
-	char*	 str;
-
-	/* Following two steps are optional and not required for
-	   data exchange to be successful. */
-
-	/* Get the cipher - opt */
-
-	BIO_printf(bio_c_out, "SSL connection using %s\n", SSL_get_cipher (con));
-
-	/* Get server's certificate (note: beware of dynamic allocation) - opt */
-
-	server_cert = SSL_get_peer_certificate (con);		CHK_NULL(server_cert);
-	BIO_printf(bio_c_out, "Server certificate:\n");
-
-	str = X509_NAME_oneline (X509_get_subject_name (server_cert),0,0);
-	CHK_NULL(str);
-	BIO_printf(bio_c_out, "\t subject: %s\n", str);
-	OPENSSL_free (str);
-
-	str = X509_NAME_oneline (X509_get_issuer_name  (server_cert),0,0);
-	CHK_NULL(str);
-	BIO_printf(bio_c_out, "\t issuer: %s\n", str);
-	OPENSSL_free (str);
-
-	/* We could do all sorts of certificate verification stuff here before
-	   deallocating the certificate. */
-
-	X509_free (server_cert);
-#else
-	print_stuff(bio_c_out, con, full_log);
-#endif
-	BIO_printf(bio_c_out, "@@@@@ End Arnold's private test @@@@@.\n");
-#endif
-
     do_ssl_shutdown(con);
 #if defined(OPENSSL_SYS_WINDOWS)
     /*
@@ -2576,78 +2534,95 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
     return (ret);
 }
 
+# include <sys/time.h>
+# include <sys/resource.h>
+
+static double tminterval(struct timeval tmstart)
+{
+	double ret = 0;
+	struct timeval now;
+
+	gettimeofday(&now, NULL);
+
+	ret = ((now.tv_sec + now.tv_usec * 1e-6)
+	- (tmstart.tv_sec + tmstart.tv_usec * 1e-6));
+	tmstart = now;
+
+	return ret;
+}
+#if 0
+int s_k312_main(int argc, char **argv)
+{
+	struct sockaddr_in address;
+	int client_sock;
+	int len,result;
+	int n,tmp;
+	char buffer[BUFSIZZ];
+	unsigned char *host="admin.omsg.cn";
+	short port = 80;
+	struct hostent *he;
+	struct in_addr **addr_list;
+	int i;
+	struct timeval tmstart;
+
+	#define REQUEST_STR "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n"
+
+	if ((he = gethostbyname(host)) == NULL) {  // get the host info
+		printf("gethostbyname error");
+		return 1;
+	}
+	printf("Official name is: %s\n", he->h_name);
+	printf("	IP addresses: ");
+	addr_list = (struct in_addr **)he->h_addr_list;
+	for(i = 0; addr_list[i] != NULL; i++) {
+		printf("\t%s \n", inet_ntoa(*addr_list[i]));
+	}
+
+	client_sock=socket(AF_INET,SOCK_STREAM,0);
+	address.sin_addr.s_addr=inet_addr(inet_ntoa(*addr_list[0]));
+	address.sin_family=AF_INET;
+	address.sin_port=htons(port);
+	len=sizeof(address);
+	printf("@@@@@ line=%d time consumption=%lf\n", __LINE__, tminterval(tmstart));
+	result=connect(client_sock,(struct sockaddr *)&address,len);
+	if(result==-1){
+		printf("error!");
+		exit(-1);
+	}
+	printf("@@@@@ line=%d time consumption=%lf\n", __LINE__, tminterval(tmstart));
+	n=write(client_sock,REQUEST_STR, strlen(REQUEST_STR));
+	if(n<0){
+		printf("error write/n");
+	}
+	memset(buffer,0, sizeof(buffer));
+	printf("@@@@@ line=%d time consumption=%lf\n", __LINE__, tminterval(tmstart));
+	while(tmp=recv(client_sock,buffer,sizeof(buffer),0)){
+		if(tmp==-1) break;
+		printf("@@@@@ line=%d mbuf_len=%d time consumption=%lf, buffer=%s\n", __LINE__, tmp, tminterval(tmstart), buffer);
+	}
+	return (EXIT_SUCCESS);
+}
+
+#else
 int s_k312_main(int argc, char **argv)
 {
     BIO *sbio;
-    EVP_PKEY *key = NULL;
-    SSL *con = NULL;
-    SSL_CTX *ctx = NULL;
-    STACK_OF(X509) *chain = NULL;
-    X509 *cert = NULL;
-    X509_VERIFY_PARAM *vpm = NULL;
-    SSL_EXCERT *exc = NULL;
-    SSL_CONF_CTX *cctx = NULL;
-    STACK_OF(OPENSSL_STRING) *ssl_args = NULL;
-    STACK_OF(X509_CRL) *crls = NULL;
-    const SSL_METHOD *meth = TLS_client_method();
-    char *cbuf = NULL, *sbuf = NULL;
     char *mbuf = NULL, *proxystr = NULL, *connectstr = NULL;
     char  *host = NULL;
     char *port = OPENSSL_strdup(PORT);
-    char *inrand = NULL;
-    struct timeval timeout, *timeoutp;
-    fd_set readfds, writefds;
-    int build_chain = 0, cbuf_len, cbuf_off;
-    int key_format = FORMAT_PEM, full_log = 1, mbuf_len = 0;
-    int prexit = 0;
-    int reconnect = 0, verify = SSL_VERIFY_NONE, vpmtouched = 0;
-    int ret = 1, in_init = 1, i, s = -1, k, width, state = 0;
-    int sbuf_len, sbuf_off, cmdletters = 1;
+    int mbuf_len = 0;
+    int ret = 1, s = -1;
     int socket_family = AF_UNSPEC, socket_type = SOCK_STREAM;
-    int starttls_proto = PROTO_OFF, crl_format = FORMAT_PEM;
-    int write_tty, read_tty, write_ssl, read_ssl, tty_on, ssl_pending;
-#if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
-    int at_eof = 0;
-#endif
+    int starttls_proto = PROTO_OFF;
     OPTION_CHOICE o;
-    ENGINE *e = NULL;
-#ifndef OPENSSL_NO_NEXTPROTONEG
-    const char *next_proto_neg_in = NULL;
-#endif
-#ifndef OPENSSL_NO_SRP
-    SRP_ARG srp_arg = { NULL, NULL, 0, 0, 0, 1024 };
-#endif
-    int min_version = 0, max_version = 0, prot_opt = 0, no_prot_opt = 0;
     enum { use_inet, use_unix, use_unknown } connect_type = use_unknown;
-    int c_msg = 0, c_ign_eof = 0;
+    int c_msg = 0;
     BIO *bio_c_msg = NULL;
-
-    FD_ZERO(&readfds);
-    FD_ZERO(&writefds);
-/* Known false-positive of MemorySanitizer. */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
-    __msan_unpoison(&readfds, sizeof(readfds));
-    __msan_unpoison(&writefds, sizeof(writefds));
-# endif
-#endif
 
     prog = opt_progname(argv[0]);
     c_quiet = 0;
-    c_showcerts = 0;
-    vpm = X509_VERIFY_PARAM_new();
-    cctx = SSL_CONF_CTX_new();
 
-    if (vpm == NULL || cctx == NULL) {
-        BIO_printf(bio_err, "%s: out of memory\n", prog);
-        goto end;
-    }
-
-    cbuf = app_malloc(BUFSIZZ, "cbuf");
-    sbuf = app_malloc(BUFSIZZ, "sbuf");
     mbuf = app_malloc(BUFSIZZ, "mbuf");
-
-    SSL_CONF_CTX_set_flags(cctx, SSL_CONF_FLAG_CLIENT | SSL_CONF_FLAG_CMDLINE);
 
     prog = opt_init(argc, argv, s_k312_options);
     while ((o = opt_next()) != OPT_EOF) {
@@ -2662,18 +2637,6 @@ int s_k312_main(int argc, char **argv)
             BIO_printf(bio_err,
                        "%s: Intermixed protocol flags (internet and unix domains)\n",
                        prog);
-            goto end;
-        }
-
-        if (IS_PROT_FLAG(o) && ++prot_opt > 1) {
-            BIO_printf(bio_err, "Cannot supply multiple protocol flags\n");
-            goto end;
-        }
-        if (IS_NO_PROT_FLAG(o))
-            no_prot_opt++;
-        if (prot_opt == 1 && no_prot_opt) {
-            BIO_printf(bio_err,
-                       "Cannot supply both a protocol flag and '-no_<prot>'\n");
             goto end;
         }
 
@@ -2736,399 +2699,118 @@ int s_k312_main(int argc, char **argv)
         }
     }
 
-    if (socket_family == AF_UNIX && socket_type != SOCK_STREAM) {
-        BIO_printf(bio_err,
-                   "Can't use unix sockets and datagrams together\n");
-        goto end;
-    }
+	if (socket_family == AF_UNIX && socket_type != SOCK_STREAM) {
+		BIO_printf(bio_err, "Can't use unix sockets and datagrams together\n");
+		goto end;
+	}
 
-#if !defined(OPENSSL_NO_NEXTPROTONEG)
-    next_proto.status = -1;
-    if (next_proto_neg_in) {
-        next_proto.data =
-            next_protos_parse(&next_proto.len, next_proto_neg_in);
-        if (next_proto.data == NULL) {
-            BIO_printf(bio_err, "Error parsing -nextprotoneg argument\n");
-            goto end;
-        }
-    } else
-        next_proto.data = NULL;
-#endif
+	if (bio_c_out == NULL) {
+		if (c_quiet && !c_debug) {
+			bio_c_out = BIO_new(BIO_s_null());
+			if (c_msg && !bio_c_msg)
+				bio_c_msg = dup_bio_out(FORMAT_TEXT);
+		} else if (bio_c_out == NULL)
+			bio_c_out = dup_bio_out(FORMAT_TEXT);
+	}
 
-    if (!load_excert(&exc))
-        goto end;
+	if (init_client(&s, host, port, socket_family, socket_type) == 0) {
+		BIO_printf(bio_err, "connect:errno=%d\n", get_last_socket_error());
+		BIO_closesocket(s);
+		goto end;
+	}
+	BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
-    if (!app_RAND_load_file(NULL, 1) && inrand == NULL
-        && !RAND_status()) {
-        BIO_printf(bio_err,
-                   "warning, not much extra random data, consider using the -rand option\n");
-    }
+	sbio = BIO_new_socket(s, BIO_NOCLOSE);
 
-    if (bio_c_out == NULL) {
-        if (c_quiet && !c_debug) {
-            bio_c_out = BIO_new(BIO_s_null());
-            if (c_msg && !bio_c_msg)
-                bio_c_msg = dup_bio_out(FORMAT_TEXT);
-        } else if (bio_c_out == NULL)
-            bio_c_out = dup_bio_out(FORMAT_TEXT);
-    }
+	BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
+	struct timeval tmstart;
+	unsigned char PNG_ID[4] = {0x89, 0x50, 0x4e, 0x47};
+	unsigned char png_flag = 0;
+	unsigned int png_len = 0;
+	char *outfile = "logo.png";
+	FILE *fp;
 
-    ctx = SSL_CTX_new(meth);
-    if (ctx == NULL) {
-        ERR_print_errors(bio_err);
-        goto end;
-    }
+	gettimeofday(&tmstart, NULL);
 
-    if (SSL_CTX_set_min_proto_version(ctx, min_version) == 0)
-        goto end;
-    if (SSL_CTX_set_max_proto_version(ctx, max_version) == 0)
-        goto end;
+	{
+		enum {
+			error_proto,	 /* Wrong protocol, not even HTTP */
+			error_connect,	 /* CONNECT failed */
+			success
+		} foundit = error_connect;
+		BIO *fbio = BIO_new(BIO_f_buffer());
 
-    if (!config_ctx(cctx, ssl_args, ctx))
-        goto end;
+		BIO_push(fbio, sbio);
+		BIO_printf(fbio, "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n");
 
-    SSL_CTX_set_verify(ctx, verify, verify_callback);
+		(void)BIO_flush(fbio);
+		/*
+		* The first line is the HTTP response.  According to RFC 7230,
+		* it's formated exactly like this:
+		*
+		* HTTP/d.d ddd Reason text\r\n
+		*/
+		mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+		BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, png_len, tminterval(tmstart));
+		if (mbuf[8] != ' ') {
+			BIO_printf(bio_err,	"HTTP CONNECT failed, incorrect response from proxy\n");
+			foundit = error_proto;
+		} else if (mbuf[9] != '2') {
+			BIO_printf(bio_err, "HTTP CONNECT failed: %s ", mbuf[9]);
+		} else {
+			foundit = success;
+		}
 
+		if((fp = fopen(outfile,"wra+"))==NULL)
+		{
+			printf("can't open abc.txt\n");
+			exit(0);
+		}
 
-    con = SSL_new(ctx);
+		if (foundit != error_proto) {
+			/* Read past all following headers */
+			do {
+				mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+				BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, png_len, tminterval(tmstart));
+				if(!memcmp(PNG_ID, mbuf, 4))
+				{
+					printf("PNG Signature found\n");
+					png_flag = 1;
+				}
 
- re_start:
-    if (init_client(&s, host, port, socket_family, socket_type) == 0) {
-        BIO_printf(bio_err, "connect:errno=%d\n", get_last_socket_error());
-        BIO_closesocket(s);
-        goto end;
-    }
-    BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
+				if(png_flag)
+				{
+					png_len += mbuf_len;
+					if(fp != NULL)
+					if(fwrite(mbuf,sizeof(char),mbuf_len,fp)!=mbuf_len)
+					printf("can't write %s\n", outfile);
+				}
+			} while (mbuf_len > 0);
+		}
 
-        sbio = BIO_new_socket(s, BIO_NOCLOSE);
+		if(fp != NULL)
+			fclose(fp);
 
+		(void)BIO_flush(fbio);
 
-    SSL_set_bio(con, sbio, sbio);
-    SSL_set_connect_state(con);
-
-    /* ok, lets connect */
-    if (fileno_stdin() > SSL_get_fd(con))
-        width = fileno_stdin() + 1;
-    else
-        width = SSL_get_fd(con) + 1;
-
-    read_tty = 1;
-    write_tty = 0;
-    tty_on = 0;
-    read_ssl = 1;
-    write_ssl = 1;
-
-    cbuf_len = 0;
-    cbuf_off = 0;
-    sbuf_len = 0;
-    sbuf_off = 0;
-
-BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
-    switch ((PROTOCOL_CHOICE) starttls_proto) {
-    case PROTO_OFF:
-        break;
-    case PROTO_CONNECT:
-        {
-            enum {
-                error_proto,     /* Wrong protocol, not even HTTP */
-                error_connect,   /* CONNECT failed */
-                success
-            } foundit = error_connect;
-            BIO *fbio = BIO_new(BIO_f_buffer());
-
-            BIO_push(fbio, sbio);
-            BIO_printf(fbio, "CONNECT %s HTTP/1.0\r\n\r\n", connectstr);
-            (void)BIO_flush(fbio);
-            /*
-             * The first line is the HTTP response.  According to RFC 7230,
-             * it's formated exactly like this:
-             *
-             * HTTP/d.d ddd Reason text\r\n
-             */
-            mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-	BIO_printf(bio_c_out, "@@@@@ mbuf=%s\n", mbuf);
-            if (mbuf[8] != ' ') {
-                BIO_printf(bio_err,
-                           "%s: HTTP CONNECT failed, incorrect response "
-                           "from proxy\n", prog);
-                foundit = error_proto;
-            } else if (mbuf[9] != '2') {
-                BIO_printf(bio_err, "%s: HTTP CONNECT failed: %s ", prog,
-                           &mbuf[9]);
-            } else {
-                foundit = success;
-            }
-            if (foundit != error_proto) {
-                /* Read past all following headers */
-                do {
-                    mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-                } while (mbuf_len > 2);
-            }
-            (void)BIO_flush(fbio);
-            BIO_pop(fbio);
-            BIO_free(fbio);
-            if (foundit != success) {
-                goto shut;
-            }
-        }
-        break;
-    }
-
-    for (;;) {
-        FD_ZERO(&readfds);
-        FD_ZERO(&writefds);
-
-        if ((SSL_version(con) == DTLS1_VERSION) &&
-            DTLSv1_get_timeout(con, &timeout))
-            timeoutp = &timeout;
-        else
-            timeoutp = NULL;
-
-        if (SSL_in_init(con) && !SSL_total_renegotiations(con)) {
-            in_init = 1;
-            tty_on = 0;
-        } else {
-            tty_on = 1;
-            if (in_init) {
-                in_init = 0;
-
-                //print_stuff(bio_c_out, con, full_log);
-                if (full_log > 0)
-                    full_log--;
-
-                if (starttls_proto) {
-                    BIO_write(bio_err, mbuf, mbuf_len);
-                    /* We don't need to know any more */
-                    if (!reconnect)
-                        starttls_proto = PROTO_OFF;
-                }
-
-                if (reconnect) {
-                    reconnect--;
-                    BIO_printf(bio_c_out,
-                               "drop connection and then reconnect\n");
-                    do_ssl_shutdown(con);
-                    SSL_set_connect_state(con);
-                    BIO_closesocket(SSL_get_fd(con));
-                    goto re_start;
-                }
-            }
-        }
-
-        ssl_pending = read_ssl && SSL_has_pending(con);
-
-        if (!ssl_pending) {
-#if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
-            if (tty_on) {
-                /*
-                 * Note that select() returns when read _would not block_,
-                 * and EOF satisfies that.  To avoid a CPU-hogging loop,
-                 * set the flag so we exit.
-                 */
-                if (read_tty && !at_eof)
-                    openssl_fdset(fileno_stdin(), &readfds);
-#if !defined(OPENSSL_SYS_VMS)
-                if (write_tty)
-                    openssl_fdset(fileno_stdout(), &writefds);
-#endif
-            }
-            if (read_ssl)
-                openssl_fdset(SSL_get_fd(con), &readfds);
-            if (write_ssl)
-                openssl_fdset(SSL_get_fd(con), &writefds);
-#endif
-
-            /*
-             * Note: under VMS with SOCKETSHR the second parameter is
-             * currently of type (int *) whereas under other systems it is
-             * (void *) if you don't have a cast it will choke the compiler:
-             * if you do have a cast then you can either go for (int *) or
-             * (void *).
-             */
-            i = select(width, (void *)&readfds, (void *)&writefds,
-                       NULL, timeoutp);
-
-            if (i < 0) {
-                BIO_printf(bio_err, "bad select %d\n",
-                           get_last_socket_error());
-                goto shut;
-                /* goto end; */
-            }
-        }
-
-        if ((SSL_version(con) == DTLS1_VERSION)
-            && DTLSv1_handle_timeout(con) > 0) {
-            BIO_printf(bio_err, "TIMEOUT occurred\n");
-        }
-
-        if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
-	BIO_printf(bio_c_out, "SSL_write www.baidu.com\n");
-	#define HTTP_HEADERS "GET / HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: OpenSSL\r\n\r\n"
-	strcpy(cbuf, HTTP_HEADERS);
-	cbuf_len = strlen(cbuf);
-            k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
-	BIO_printf(bio_c_out, "SSL_write end %d\n", SSL_get_error(con, k));
-            switch (SSL_get_error(con, k)) {
-            case SSL_ERROR_NONE:
-                cbuf_off += k;
-                cbuf_len -= k;
-                if (k <= 0)
-                    goto end;
-                /* we have done a  write(con,NULL,0); */
-                if (cbuf_len <= 0) {
-                    read_tty = 1;
-                    write_ssl = 0;
-                } else {        /* if (cbuf_len > 0) */
-
-                    read_tty = 0;
-                    write_ssl = 1;
-                }
-                break;
-            case SSL_ERROR_WANT_WRITE:
-                BIO_printf(bio_c_out, "write W BLOCK\n");
-                write_ssl = 1;
-                read_tty = 0;
-                break;
-            case SSL_ERROR_WANT_ASYNC:
-                BIO_printf(bio_c_out, "write A BLOCK\n");
-                wait_for_async(con);
-                write_ssl = 1;
-                read_tty = 0;
-                break;
-            case SSL_ERROR_WANT_READ:
-                BIO_printf(bio_c_out, "write R BLOCK\n");
-                write_tty = 0;
-                read_ssl = 1;
-                write_ssl = 0;
-                break;
-            case SSL_ERROR_WANT_X509_LOOKUP:
-                BIO_printf(bio_c_out, "write X BLOCK\n");
-                break;
-            case SSL_ERROR_ZERO_RETURN:
-                if (cbuf_len != 0) {
-                    BIO_printf(bio_c_out, "shutdown\n");
-                    ret = 0;
-                    goto shut;
-                } else {
-                    read_tty = 1;
-                    write_ssl = 0;
-                    break;
-                }
-
-            case SSL_ERROR_SYSCALL:
-                if ((k != 0) || (cbuf_len != 0)) {
-                    BIO_printf(bio_err, "write:errno=%d\n",
-                               get_last_socket_error());
-                    goto shut;
-                } else {
-                    read_tty = 1;
-                    write_ssl = 0;
-                }
-                break;
-            case SSL_ERROR_WANT_ASYNC_JOB:
-                /* This shouldn't ever happen in s_client - treat as an error */
-            case SSL_ERROR_SSL:
-                ERR_print_errors(bio_err);
-                goto shut;
-            }
-        }
-         else if (ssl_pending || FD_ISSET(SSL_get_fd(con), &readfds)) {
-            k = SSL_read(con, sbuf, BUFSIZZ /* BUFSIZZ */ );
-	printf("@@@@@ %s line=%d %s\n", __func__, __LINE__, sbuf);
-
-            switch (SSL_get_error(con, k)) {
-            case SSL_ERROR_NONE:
-                if (k <= 0)
-                    goto end;
-                sbuf_off = 0;
-                sbuf_len = k;
-
-                read_ssl = 0;
-                write_tty = 1;
-                break;
-            case SSL_ERROR_WANT_ASYNC:
-                BIO_printf(bio_c_out, "read A BLOCK\n");
-                wait_for_async(con);
-                write_tty = 0;
-                read_ssl = 1;
-                if ((read_tty == 0) && (write_ssl == 0))
-                    write_ssl = 1;
-                break;
-            case SSL_ERROR_WANT_WRITE:
-                BIO_printf(bio_c_out, "read W BLOCK\n");
-                write_ssl = 1;
-                read_tty = 0;
-                break;
-            case SSL_ERROR_WANT_READ:
-                BIO_printf(bio_c_out, "read R BLOCK\n");
-                write_tty = 0;
-                read_ssl = 1;
-                if ((read_tty == 0) && (write_ssl == 0))
-                    write_ssl = 1;
-                break;
-            case SSL_ERROR_WANT_X509_LOOKUP:
-                BIO_printf(bio_c_out, "read X BLOCK\n");
-                break;
-            case SSL_ERROR_SYSCALL:
-                ret = get_last_socket_error();
-                    BIO_printf(bio_err, "read:errno=%d\n", ret);
-                goto shut;
-            case SSL_ERROR_ZERO_RETURN:
-                BIO_printf(bio_c_out, "\nclosed\n");
-                ret = 0;
-                goto shut;
-            case SSL_ERROR_WANT_ASYNC_JOB:
-                /* This shouldn't ever happen in s_client. Treat as an error */
-            case SSL_ERROR_SSL:
-                ERR_print_errors(bio_err);
-                goto shut;
-                /* break; */
-            }
-        }
-    }
+		BIO_pop(fbio);
+		BIO_free(fbio);
+	}
 
     ret = 0;
 
- shut:
-    if (in_init)
-        print_stuff(bio_c_out, con, full_log);
-
-    do_ssl_shutdown(con);
-    BIO_closesocket(SSL_get_fd(con));
  end:
-    if (con != NULL) {
-        if (prexit != 0)
-            print_stuff(bio_c_out, con, 1);
-        SSL_free(con);
-    }
-#if !defined(OPENSSL_NO_NEXTPROTONEG)
-    OPENSSL_free(next_proto.data);
-#endif
-    SSL_CTX_free(ctx);
-    X509_free(cert);
-    sk_X509_CRL_pop_free(crls, X509_CRL_free);
-    EVP_PKEY_free(key);
-    sk_X509_pop_free(chain, X509_free);
-#ifndef OPENSSL_NO_SRP
-    OPENSSL_free(srp_arg.srppassin);
-#endif
     OPENSSL_free(connectstr);
     OPENSSL_free(host);
     OPENSSL_free(port);
-    X509_VERIFY_PARAM_free(vpm);
-    ssl_excert_free(exc);
-    sk_OPENSSL_STRING_free(ssl_args);
-    SSL_CONF_CTX_free(cctx);
-    OPENSSL_clear_free(cbuf, BUFSIZZ);
-    OPENSSL_clear_free(sbuf, BUFSIZZ);
     OPENSSL_clear_free(mbuf, BUFSIZZ);
-    release_engine(e);
     BIO_free(bio_c_out);
     bio_c_out = NULL;
     BIO_free(bio_c_msg);
     bio_c_msg = NULL;
     return (ret);
 }
+#endif
 
 static void print_stuff(BIO *bio, SSL *s, int full)
 {
