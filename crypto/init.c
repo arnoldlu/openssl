@@ -497,7 +497,6 @@ int OPENSSL_init_crypto(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings)
 {
     static int stoperrset = 0;
 
-	printf("@@@@@ %s line=%d opts=0x%08lx\n", __func__, __LINE__, opts);
     if (stopped) {
         if (!stoperrset) {
             /*

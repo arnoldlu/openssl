@@ -2070,8 +2070,8 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
             BIO *fbio = BIO_new(BIO_f_buffer());
 
             BIO_push(fbio, sbio);
-            //BIO_printf(fbio, "CONNECT %s HTTP/1.0\r\n\r\n", connectstr);
-            BIO_printf(fbio, "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\n    Host: admin.omsg.cn\r\n    Referer: http://10.41.70.100/ac_portal/zte_webauth/pc.html?templete=zte_webauth&tabs=pwd&vlanid=0&url=http://admin.omsg.cn%2finuploadpic%2f2016121034000012.png    Connection: Keep-Alive\r\n\r\n");
+            BIO_printf(fbio, "CONNECT %s HTTP/1.0\r\n\r\n", connectstr);
+            //BIO_printf(fbio, "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\n    Host: admin.omsg.cn\r\n    Referer: http://10.41.70.100/ac_portal/zte_webauth/pc.html?templete=zte_webauth&tabs=pwd&vlanid=0&url=http://admin.omsg.cn%2finuploadpic%2f2016121034000012.png    Connection: Keep-Alive\r\n\r\n");
 
             (void)BIO_flush(fbio);
             /*
@@ -2099,7 +2099,6 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
                 } while (mbuf_len > 2);
             }
             (void)BIO_flush(fbio);
-
             BIO_pop(fbio);
             BIO_free(fbio);
             if (foundit != success) {
@@ -2169,9 +2168,6 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
             }
         }
     }
-	//	get_url_data(sbio, "GET http://admin.omsg.cn HTTP/1.1\r\n	 Accept: */* \r\n	 Host: admin.omsg.cn\r\n	Connection: Close\r\n	 Proxy-Connection: Keep-Alive\r\n\r\n");
-	//get_url_data(sbio, "CONNECT http://admin.omsg.cn:80 HTTP/1.0\r\n\r\n");
-	//get_url_data(sbio, "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\n    Accept: */* \r\n    Host: admin.omsg.cn\r\n    Connection: Close\r\n    Proxy-Connection: Keep-Alive\r\n\r\n");
 
     for (;;) {
         FD_ZERO(&readfds);

@@ -2770,7 +2770,6 @@ int ssl3_num_ciphers(void)
 
 const SSL_CIPHER *ssl3_get_cipher(unsigned int u)
 {
-	printf("@@@@@ %s line=%d u=%d\n", __func__, __LINE__, u);
     if (u < SSL3_NUM_CIPHERS)
         return (&(ssl3_ciphers[SSL3_NUM_CIPHERS - 1 - u]));
     else
