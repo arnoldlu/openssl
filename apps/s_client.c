@@ -40,6 +40,8 @@
 #include <string.h>
 #include <errno.h>
 #include <openssl/e_os2.h>
+#include "cJSON.h"
+#include <http_parser.h>
 
 #ifndef OPENSSL_NO_SOCK
 
@@ -830,6 +832,270 @@ void get_url_data(BIO *sbio, char *url)
            BIO_free(fbio);
 	OPENSSL_clear_free(mbuf, BUFSIZZ);
 }
+
+static char * makeOmsg(void)
+{
+    cJSON *pJsonRoot = NULL;
+    char *p = NULL;
+
+    pJsonRoot = cJSON_CreateObject();
+    if(NULL == pJsonRoot)
+    {
+        printf("%s line=%d NULL\n", __func__, __LINE__);
+        return NULL;
+    }
+/*
+"smallogo":"http://admin.omsg.cn/inuploadpic/2016121034000012.png",
+"CompanyType":"002001",
+"Logo":"http://admin.omsg.cn/uploadpic/2016121034000012.png",
+"CompanyInfoId":19,
+"DestnumDesc":"江苏短信营业厅",
+"CompanyAbb":"江苏移动",
+"DestnumFix":5,
+"WechatPublic":"cmcckf10086",
+"Returncode":"200",
+"LicenseNumber":"320000400000052",
+"Returnmessage":"接口调用成功",
+"PhoneWeb":"http://wap.10086.cn/",
+"DestnumType":"mobile",
+"DestnumProv":"250",
+"DestnumSuffix":0,
+"ServiceTel":"10086",
+"Company":"中国移动通信集团江苏有限公司",
+"ProName":"江苏省",
+"ManuAlias":"中国移动客服"
+*/
+    cJSON_AddStringToObject(pJsonRoot, "smallogo", "http://admin.omsg.cn/inuploadpic/2016121034000012.png");
+    cJSON_AddStringToObject(pJsonRoot, "CompanyType", "002001");
+    cJSON_AddStringToObject(pJsonRoot, "Logo", "http://admin.omsg.cn/uploadpic/2016121034000012.png");
+    cJSON_AddNumberToObject(pJsonRoot, "CompanyInfoId", 19);
+    cJSON_AddStringToObject(pJsonRoot, "DestnumDesc", "江苏短信营业厅");
+    cJSON_AddStringToObject(pJsonRoot, "CompanyAbb", "江苏移动");
+    cJSON_AddNumberToObject(pJsonRoot, "DestnumFix", 5);
+    cJSON_AddStringToObject(pJsonRoot, "WechatPublic", "cmcckf10086");
+    cJSON_AddStringToObject(pJsonRoot, "Returncode", "200");
+    cJSON_AddStringToObject(pJsonRoot, "LicenseNumber", "320000400000052");
+    cJSON_AddStringToObject(pJsonRoot, "Returnmessage", "接口调用成功");
+    cJSON_AddStringToObject(pJsonRoot, "PhoneWeb", "http://wap.10086.cn/");
+    cJSON_AddStringToObject(pJsonRoot, "DestnumType", "mobile");
+    cJSON_AddStringToObject(pJsonRoot, "DestnumProv", "250");
+    cJSON_AddNumberToObject(pJsonRoot, "DestnumSuffix", 0);
+    cJSON_AddStringToObject(pJsonRoot, "ServiceTel", "10086");
+    cJSON_AddStringToObject(pJsonRoot, "Company", "中国移动通信集团江苏有限公司");
+    cJSON_AddStringToObject(pJsonRoot, "ProName", "江苏省");
+    cJSON_AddStringToObject(pJsonRoot, "ManuAlias", "中国移动客服");
+    cJSON_AddBoolToObject(pJsonRoot, "bool", 1);
+
+    p = cJSON_Print(pJsonRoot);
+    if(NULL == p)
+    {
+        printf("%s line=%d NULL\n", __func__, __LINE__);
+        cJSON_Delete(pJsonRoot);
+        return NULL;
+    }
+
+    cJSON_Delete(pJsonRoot);
+
+    return p;
+}
+
+static void parseOmsg(char * pMsg)
+{
+    cJSON *pJson;
+    cJSON *pSub;
+
+    printf("\n\n@@@@@@@@@@ Start to print @@@@@@@@@@\n pMsg=%s\n\n", pMsg);
+
+    if(NULL == pMsg)
+    {
+        return;
+    }
+
+    pJson = cJSON_Parse(pMsg);
+    if(NULL == pJson)
+    {
+      return ;
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "smallogo");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "CompanyType");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "Logo");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "CompanyInfoId");
+    if(pSub)
+    {
+        printf("%s = %d\n", pSub->string, pSub->valueint);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "DestnumDesc");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "CompanyAbb");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "DestnumFix");
+    if(pSub)
+    {
+        printf("%s = %d\n", pSub->string, pSub->valueint);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "WechatPublic");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "Returncode");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "LicenseNumber");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "Returnmessage");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "PhoneWeb");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "DestnumType");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "DestnumProv");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "DestnumSuffix");
+    if(pSub)
+    {
+        printf("%s = %d\n", pSub->string, pSub->valueint);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "ServiceTel");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "Company");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "ProName");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, "ManuAlias");
+    if(pSub)
+    {
+        printf("%s = %s\n", pSub->string, pSub->valuestring);
+    }
+    printf("\n@@@@@@@@@@ End of print @@@@@@@@@@\n\n", __func__, __LINE__);
+
+    cJSON_Delete(pJson);
+}
+
+static http_parser *parser;
+
+int on_message_begin(http_parser* _) {
+  (void)_;
+  printf("\n***MESSAGE BEGIN***\n\n");
+  return 0;
+}
+
+int on_headers_complete(http_parser* _) {
+  (void)_;
+  printf("\n***HEADERS COMPLETE***\n\n");
+  return 0;
+}
+
+int on_message_complete(http_parser* _) {
+  (void)_;
+  printf("\n***MESSAGE COMPLETE***\n\n");
+  return 0;
+}
+
+int on_url(http_parser* _, const char* at, size_t length) {
+  (void)_;
+  printf("Url: %.*s\n", (int)length, at);
+  return 0;
+}
+
+int on_header_field(http_parser* _, const char* at, size_t length) {
+  (void)_;
+  printf("Header field: %.*s\n", (int)length, at);
+  return 0;
+}
+
+int on_header_value(http_parser* _, const char* at, size_t length) {
+  (void)_;
+  printf("Header value: %.*s\n", (int)length, at);
+  return 0;
+}
+
+int on_body(http_parser* _, const char* at, size_t length) {
+  (void)_;
+  unsigned int z;
+  char *p = at;
+  //printf("Body: %.*s\n", (int)length, at);
+   printf("Body p=0x%08x\n\n", p);
+
+  for (z = 0; z < length; z++)
+	  printf("%02X%c", *(char *)(p+z), ((z + 1) % 4) ? ' ' : '\n');
+  return 0;
+}
+
+static http_parser_settings settings_null =
+  {.on_message_begin = on_message_begin
+  ,.on_header_field = on_header_field
+  ,.on_header_value = on_header_value
+  ,.on_url = on_url
+  ,.on_status = 0
+  ,.on_body = on_body
+  ,.on_headers_complete = on_headers_complete
+  ,.on_message_complete = on_message_complete
+  };
+
 
 int s_client_main(int argc, char **argv)
 {
@@ -2383,7 +2649,7 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         else if (!ssl_pending && FD_ISSET(fileno_stdout(), &writefds))
 #endif
         {
-	printf("@@@@@ %s line=%d raw_write_stdout\n", __func__, __LINE__);
+	parseOmsg(sbuf);
 #ifdef CHARSET_EBCDIC
             ascii2ebcdic(&(sbuf[sbuf_off]), &(sbuf[sbuf_off]), sbuf_len);
 #endif
@@ -2600,6 +2866,7 @@ static double tminterval(struct timeval tmstart)
 
 	return ret;
 }
+
 #if 0
 int s_k312_main(int argc, char **argv)
 {
@@ -2790,8 +3057,19 @@ int s_k312_main(int argc, char **argv)
 		} foundit = error_connect;
 		BIO *fbio = BIO_new(BIO_f_buffer());
 
+		char *buf = "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
 		BIO_push(fbio, sbio);
-		BIO_printf(fbio, "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n");
+		BIO_printf(fbio, buf);
+
+//		const char *buf;
+		size_t parsed;
+		char *http_buf;
+		unsigned int http_buf_len = 0;
+
+		http_buf = malloc(sizeof(char)*8*1024);
+		parser = malloc(sizeof(http_parser));
+		http_parser_init(parser, HTTP_REQUEST);
+		parsed = http_parser_execute(parser, &settings_null, buf, strlen(buf));
 
 		(void)BIO_flush(fbio);
 		/*
@@ -2801,7 +3079,7 @@ int s_k312_main(int argc, char **argv)
 		* HTTP/d.d ddd Reason text\r\n
 		*/
 		mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-		BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, png_len, tminterval(tmstart));
+		//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, png_len, tminterval(tmstart));
 		if (mbuf[8] != ' ') {
 			BIO_printf(bio_err,	"HTTP CONNECT failed, incorrect response from proxy\n");
 			foundit = error_proto;
@@ -2820,8 +3098,10 @@ int s_k312_main(int argc, char **argv)
 		if (foundit != error_proto) {
 			/* Read past all following headers */
 			do {
+				memcpy(http_buf+http_buf_len, mbuf, mbuf_len);
+				http_buf_len += mbuf_len;
 				mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-				BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, png_len, tminterval(tmstart));
+				//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
 				if(!memcmp(PNG_ID, mbuf, 4))
 				{
 					printf("PNG Signature found\n");
@@ -2830,6 +3110,7 @@ int s_k312_main(int argc, char **argv)
 
 				if(png_flag)
 				{
+					BIO_printf(bio_c_out, "@@@@@ line=%d HEADER length=%d http_buf=%p\n", __LINE__, http_buf_len, (char *)http_buf);
 					png_len += mbuf_len;
 					if(fp != NULL)
 					if(fwrite(mbuf,sizeof(char),mbuf_len,fp)!=mbuf_len)
@@ -2840,6 +3121,10 @@ int s_k312_main(int argc, char **argv)
 
 		if(fp != NULL)
 			fclose(fp);
+		http_parser_init(parser, HTTP_RESPONSE);
+		parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+		free(parser);
+		free(http_buf);
 
 		(void)BIO_flush(fbio);
 
