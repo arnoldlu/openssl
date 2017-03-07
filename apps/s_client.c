@@ -41,7 +41,7 @@
 #include <errno.h>
 #include <openssl/e_os2.h>
 #include <http_parser.h>
-#include "cJSON.h"
+#include <cjson/cJSON.h>
 
 #ifndef OPENSSL_NO_SOCK
 
