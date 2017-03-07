@@ -1036,100 +1036,109 @@ static void parseOmsg(char * pMsg)
 }
 
 static http_parser *parser;
-struct http_png{
+struct http_content{
 	char type[32];
-	unsigned int png_size;
-	char *png_start;
-} http_png;
+	unsigned int response_size;
+	unsigned int content_size;
+	char *content_start;
+	char header_checked;
+	char mem_realloced;
+}http_img ;
 
-int on_message_begin(http_parser* _) {
-  (void)_;
-  printf("\n***MESSAGE BEGIN***\n\n");
-  return 0;
+int on_message_begin(http_parser* _)
+{
+	(void)_;
+	printf("\n***MESSAGE BEGIN***\n\n");
+	return 0;
 }
 
-int on_headers_complete(http_parser* _) {
-  (void)_;
-  printf("\n***HEADERS COMPLETE***\n\n");
-  return 0;
+int on_headers_complete(http_parser* _)
+{
+	(void)_;
+	printf("\n***HEADERS COMPLETE***\n\n");
+	return 0;
 }
 
-int on_message_complete(http_parser* _) {
-  (void)_;
-  printf("\n***MESSAGE COMPLETE***\n\n");
-  return 0;
+int on_message_complete(http_parser* _)
+	{
+	(void)_;
+	printf("\n***MESSAGE COMPLETE***\n\n");
+	return 0;
 }
 
-int on_url(http_parser* _, const char* at, size_t length) {
-  (void)_;
-  printf("Url: %.*s\n", (int)length, at);
-  return 0;
+int on_url(http_parser* _, const char* at, size_t length)
+{
+	(void)_;
+	printf("Url: %.*s\n", (int)length, at);
+	return 0;
 }
 char content_type_flag = 0;
 char content_length_flag = 0;
-int on_header_field(http_parser* _, const char* at, size_t length) {
-  (void)_;
-  printf("Header field: %.*s\n", (int)length, at);
-  if(!memcmp("Content-Type", at, length))
-  {
-      printf("Found Content-Type\n");
-      content_type_flag = 1;
-  }
-  if(!memcmp("Content-Length", at, length))
-  {
-      printf("Found Content-Length\n");
-      content_length_flag = 1;
-  }
+int on_header_field(http_parser* _, const char* at, size_t length)
+{
+	(void)_;
+	printf("Header field: %.*s\n", (int)length, at);
+	if(!memcmp("Content-Type", at, length))
+	{
+		//printf("Found Content-Type\n");
+		content_type_flag = 1;
+	}
+	if(!memcmp("Content-Length", at, length))
+	{
+		//printf("Found Content-Length\n");
+		content_length_flag = 1;
+	}
 
-  return 0;
+	return 0;
 }
 
-int on_header_value(http_parser* _, const char* at, size_t length) {
-  (void)_;
-  printf("Header value: %.*s\n", (int)length, at);
-  if(content_type_flag)
-  {
-    memcpy(http_png.type, at, length);
-    printf("http_png.type = %s\n", http_png.type);
-    content_type_flag = 0;
-  }
+int on_header_value(http_parser* _, const char* at, size_t length)
+{
+	(void)_;
+	printf("Header value: %.*s\n", (int)length, at);
+	if(content_type_flag)
+	{
+		memcpy(http_img.type, at, length);
+		//printf("http_img.type = %s\n", http_img.type);
+		content_type_flag = 0;
+	}
 
-  if(content_length_flag)
-  {
-    char value[32];
-    memcpy(value, at, length);
-    printf("http_png.png_size = %s\n", value);
-    http_png.png_size = atoi(value);
-    content_length_flag = 0;
-  }
-  return 0;
+	if(content_length_flag)
+	{
+		char value[32];
+		memcpy(value, at, length);
+		//printf("http_img.content_size = %s\n", value);
+		http_img.content_size = atoi(value);
+		content_length_flag = 0;
+	}
+	return 0;
 }
 
-int on_body(http_parser* _, const char* at, size_t length) {
-  (void)_;
-  unsigned int z;
-  char *p = at;
+int on_body(http_parser* _, const char* at, size_t length)
+{
+	(void)_;
+	unsigned int z;
+	char *p = at;
 
-  if(!memcmp("image/png", http_png.type, strlen("image/png")))
-  {
-    http_png.png_start=at;
-    printf("Found PNG body!http_png.png_start=%p\n", http_png.png_start);
-	for (z = 0; z < length; z++)
-		printf("%02X%c", *(char *)(http_png.png_start+z), ((z + 1) % 4) ? ' ' : '\n');
-  }
-  return 0;
+	http_img.content_start=at;
+//	if(!memcmp("image/png", http_img.type, strlen("image/png")))
+//	{
+//		printf("Found PNG body!http_img.content_start=%p\n", http_img.content_start);
+//	}
+	return 0;
 }
 
 static http_parser_settings settings_null =
-  {.on_message_begin = on_message_begin
-  ,.on_header_field = on_header_field
-  ,.on_header_value = on_header_value
-  ,.on_url = on_url
-  ,.on_status = 0
-  ,.on_body = on_body
-  ,.on_headers_complete = on_headers_complete
-  ,.on_message_complete = on_message_complete
-  };
+{
+	.on_message_begin = on_message_begin,
+	.on_header_field = on_header_field,
+	.on_header_value = on_header_value,
+	.on_url = on_url,
+	.on_status = 0,
+	.on_body = on_body,
+	.on_headers_complete = on_headers_complete,
+	.on_message_complete = on_message_complete
+};
 
 
 int s_client_main(int argc, char **argv)
@@ -2089,7 +2098,7 @@ int s_client_main(int argc, char **argv)
         BIO_closesocket(s);
         goto end;
     }
-//    BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
+    //BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
     if (c_nbio) {
         if (!BIO_socket_nbio(s, 1)) {
@@ -2203,7 +2212,7 @@ int s_client_main(int argc, char **argv)
     sbuf_len = 0;
     sbuf_off = 0;
 
-//BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
+BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
     switch ((PROTOCOL_CHOICE) starttls_proto) {
     case PROTO_OFF:
         break;
@@ -2956,6 +2965,17 @@ int s_k312_main(int argc, char **argv)
 }
 
 #else
+#define IMAGE_TYPE_PNG "image/png"
+#define IMAGE_TYPE_PNG_EXT ".png"
+#define IMAGE_TYPE_JPEG "image/jpeg"
+#define IMAGE_TYPE_JPEG_EXT ".jpeg"
+#define IMAGE_TYPE_GIF "image/gif"
+#define IMAGE_TYPE_GIF_EXT ".gif"
+#define IMAGE_TYPE_BMP "image/bmp"
+#define IMAGE_TYPE_BMP_EXT ".bmp"
+
+#define IMAGE_TYPE_DEFAULT_EXT ".html"
+
 int s_k312_main(int argc, char **argv)
 {
     BIO *sbio;
@@ -3074,12 +3094,10 @@ int s_k312_main(int argc, char **argv)
 
 	sbio = BIO_new_socket(s, BIO_NOCLOSE);
 
-	BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
+	//BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
 	struct timeval tmstart;
-	unsigned char PNG_ID[4] = {0x89, 0x50, 0x4e, 0x47};
-	unsigned char png_flag = 0;
-	unsigned int png_len = 0;
-	char *outfile = "logo.png";
+	char outfile[20] = "logo";
+	char *file_ext;
 	FILE *fp;
 
 	gettimeofday(&tmstart, NULL);
@@ -3092,16 +3110,19 @@ int s_k312_main(int argc, char **argv)
 		} foundit = error_connect;
 		BIO *fbio = BIO_new(BIO_f_buffer());
 
-		char *buf = "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+		/*PNG*/char *buf = "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+		/*JPEG*///char *buf = "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
 		BIO_push(fbio, sbio);
 		BIO_printf(fbio, buf);
 
 		size_t parsed;
 		char *http_buf;
 		unsigned int http_buf_len = 0;
-		char check_http_header=0;
+		char *p;
 
-		http_buf = malloc(sizeof(char)*8*1024);
+		memset(&http_img, 0, sizeof(http_img));
+
+		http_buf = malloc(BUFSIZZ);
 
 	//Parse http request.
 		parser = malloc(sizeof(http_parser));
@@ -3130,22 +3151,26 @@ int s_k312_main(int argc, char **argv)
 		if (foundit != error_proto) {
 			/* Read past all following headers */
 			do {
-				if(http_png.png_start-http_buf+http_png.png_size>BUFSIZZ)
+				if((http_img.response_size>BUFSIZZ) && (!http_img.mem_realloced))
 				{
-					http_buf = realloc(http_buf, http_png.png_start-http_buf+http_png.png_size);
-					printf("realloc memory size to %d\n", http_png.png_start-http_buf+http_png.png_size);
+				//Need more memory, realloc it.
+					http_buf = realloc(http_buf,http_img.response_size);
+					http_img.mem_realloced = 1;
+					printf("realloc memory size to %d\n", http_img.response_size);
 				}
 				memcpy(http_buf+http_buf_len, mbuf, mbuf_len);
 				http_buf_len += mbuf_len;
 				mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
 				//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
 
-				if(!check_http_header && http_buf_len>1024)
+				if(!http_img.header_checked && (http_buf_len>1024))
 				{
 				//Parse http response
 					http_parser_init(parser, HTTP_RESPONSE);
 					parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
-					check_http_header =1;
+					http_img.response_size = http_img.content_start - http_buf + http_img.content_size;
+					printf("response_size=%d content_size=%d\n", http_img.response_size, http_img.content_size);
+					http_img.header_checked =1;
 				}
 			} while (mbuf_len > 0);
 		}
@@ -3155,20 +3180,33 @@ int s_k312_main(int argc, char **argv)
 		parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
 
 	//Checkout PNG body, and write to local file.
+		p = strtok(http_img.type, ";");
+		if(!strcmp(p, IMAGE_TYPE_PNG))
+			file_ext = IMAGE_TYPE_PNG_EXT;
+		else if(!strcmp(p, IMAGE_TYPE_JPEG))
+			file_ext = IMAGE_TYPE_JPEG_EXT;
+		else if(!strcmp(p, IMAGE_TYPE_GIF))
+			file_ext = IMAGE_TYPE_GIF_EXT;
+		else if(!strcmp(p, IMAGE_TYPE_BMP))
+			file_ext = IMAGE_TYPE_BMP_EXT;
+		else
+			file_ext = IMAGE_TYPE_DEFAULT_EXT;
+		strcat(outfile, file_ext);
+		printf("Content-Type=%s\n", outfile);
 		if((fp = fopen(outfile,"wra+"))==NULL)
 		{
 			printf("can't open abc.txt\n");
-			exit(0);
 		}
 		if(fp != NULL)
-			if(fwrite(http_png.png_start,sizeof(char),http_png.png_size,fp)!=http_png.png_size)
+			if(fwrite(http_img.content_start,sizeof(char),http_img.content_size,fp)!=http_img.content_size)
 				printf("can't write %s\n", outfile);
 		if(fp != NULL)
 			fclose(fp);
 
+	//Free parser
 		if(parser)
 			free(parser);
-	//End of write to local file
+	//Free allocated buffer
 		if(http_buf)
 			free(http_buf);
 
