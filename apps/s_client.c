@@ -40,8 +40,8 @@
 #include <string.h>
 #include <errno.h>
 #include <openssl/e_os2.h>
-#include "cJSON.h"
 #include <http_parser.h>
+#include "cJSON.h"
 
 #ifndef OPENSSL_NO_SOCK
 
@@ -1036,6 +1036,11 @@ static void parseOmsg(char * pMsg)
 }
 
 static http_parser *parser;
+struct http_png{
+	char type[32];
+	unsigned int png_size;
+	char *png_start;
+} http_png;
 
 int on_message_begin(http_parser* _) {
   (void)_;
@@ -1060,16 +1065,43 @@ int on_url(http_parser* _, const char* at, size_t length) {
   printf("Url: %.*s\n", (int)length, at);
   return 0;
 }
-
+char content_type_flag = 0;
+char content_length_flag = 0;
 int on_header_field(http_parser* _, const char* at, size_t length) {
   (void)_;
   printf("Header field: %.*s\n", (int)length, at);
+  if(!memcmp("Content-Type", at, length))
+  {
+      printf("Found Content-Type\n");
+      content_type_flag = 1;
+  }
+  if(!memcmp("Content-Length", at, length))
+  {
+      printf("Found Content-Length\n");
+      content_length_flag = 1;
+  }
+
   return 0;
 }
 
 int on_header_value(http_parser* _, const char* at, size_t length) {
   (void)_;
   printf("Header value: %.*s\n", (int)length, at);
+  if(content_type_flag)
+  {
+    memcpy(http_png.type, at, length);
+    printf("http_png.type = %s\n", http_png.type);
+    content_type_flag = 0;
+  }
+
+  if(content_length_flag)
+  {
+    char value[32];
+    memcpy(value, at, length);
+    printf("http_png.png_size = %s\n", value);
+    http_png.png_size = atoi(value);
+    content_length_flag = 0;
+  }
   return 0;
 }
 
@@ -1077,11 +1109,14 @@ int on_body(http_parser* _, const char* at, size_t length) {
   (void)_;
   unsigned int z;
   char *p = at;
-  //printf("Body: %.*s\n", (int)length, at);
-   printf("Body p=0x%08x\n\n", p);
 
-  for (z = 0; z < length; z++)
-	  printf("%02X%c", *(char *)(p+z), ((z + 1) % 4) ? ' ' : '\n');
+  if(!memcmp("image/png", http_png.type, strlen("image/png")))
+  {
+    http_png.png_start=at;
+    printf("Found PNG body!http_png.png_start=%p\n", http_png.png_start);
+	for (z = 0; z < length; z++)
+		printf("%02X%c", *(char *)(http_png.png_start+z), ((z + 1) % 4) ? ' ' : '\n');
+  }
   return 0;
 }
 
@@ -2054,7 +2089,7 @@ int s_client_main(int argc, char **argv)
         BIO_closesocket(s);
         goto end;
     }
-    BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
+//    BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
     if (c_nbio) {
         if (!BIO_socket_nbio(s, 1)) {
@@ -2168,7 +2203,7 @@ int s_client_main(int argc, char **argv)
     sbuf_len = 0;
     sbuf_off = 0;
 
-BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
+//BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
     switch ((PROTOCOL_CHOICE) starttls_proto) {
     case PROTO_OFF:
         break;
@@ -3057,16 +3092,18 @@ int s_k312_main(int argc, char **argv)
 		} foundit = error_connect;
 		BIO *fbio = BIO_new(BIO_f_buffer());
 
-		char *buf = "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+		char *buf = "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
 		BIO_push(fbio, sbio);
 		BIO_printf(fbio, buf);
 
-//		const char *buf;
 		size_t parsed;
 		char *http_buf;
 		unsigned int http_buf_len = 0;
+		char check_http_header=0;
 
 		http_buf = malloc(sizeof(char)*8*1024);
+
+	//Parse http request.
 		parser = malloc(sizeof(http_parser));
 		http_parser_init(parser, HTTP_REQUEST);
 		parsed = http_parser_execute(parser, &settings_null, buf, strlen(buf));
@@ -3089,42 +3126,51 @@ int s_k312_main(int argc, char **argv)
 			foundit = success;
 		}
 
+
+		if (foundit != error_proto) {
+			/* Read past all following headers */
+			do {
+				if(http_png.png_start-http_buf+http_png.png_size>BUFSIZZ)
+				{
+					http_buf = realloc(http_buf, http_png.png_start-http_buf+http_png.png_size);
+					printf("realloc memory size to %d\n", http_png.png_start-http_buf+http_png.png_size);
+				}
+				memcpy(http_buf+http_buf_len, mbuf, mbuf_len);
+				http_buf_len += mbuf_len;
+				mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+				//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
+
+				if(!check_http_header && http_buf_len>1024)
+				{
+				//Parse http response
+					http_parser_init(parser, HTTP_RESPONSE);
+					parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+					check_http_header =1;
+				}
+			} while (mbuf_len > 0);
+		}
+
+	//Reparse http response, in case realloc change the http_buf address.
+		http_parser_init(parser, HTTP_RESPONSE);
+		parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+
+	//Checkout PNG body, and write to local file.
 		if((fp = fopen(outfile,"wra+"))==NULL)
 		{
 			printf("can't open abc.txt\n");
 			exit(0);
 		}
-
-		if (foundit != error_proto) {
-			/* Read past all following headers */
-			do {
-				memcpy(http_buf+http_buf_len, mbuf, mbuf_len);
-				http_buf_len += mbuf_len;
-				mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-				//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
-				if(!memcmp(PNG_ID, mbuf, 4))
-				{
-					printf("PNG Signature found\n");
-					png_flag = 1;
-				}
-
-				if(png_flag)
-				{
-					BIO_printf(bio_c_out, "@@@@@ line=%d HEADER length=%d http_buf=%p\n", __LINE__, http_buf_len, (char *)http_buf);
-					png_len += mbuf_len;
-					if(fp != NULL)
-					if(fwrite(mbuf,sizeof(char),mbuf_len,fp)!=mbuf_len)
-					printf("can't write %s\n", outfile);
-				}
-			} while (mbuf_len > 0);
-		}
-
+		if(fp != NULL)
+			if(fwrite(http_png.png_start,sizeof(char),http_png.png_size,fp)!=http_png.png_size)
+				printf("can't write %s\n", outfile);
 		if(fp != NULL)
 			fclose(fp);
-		http_parser_init(parser, HTTP_RESPONSE);
-		parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
-		free(parser);
-		free(http_buf);
+
+		if(parser)
+			free(parser);
+	//End of write to local file
+		if(http_buf)
+			free(http_buf);
 
 		(void)BIO_flush(fbio);
 
