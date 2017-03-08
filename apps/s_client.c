@@ -833,140 +833,31 @@ void get_url_data(BIO *sbio, char *url)
 	OPENSSL_clear_free(mbuf, BUFSIZZ);
 }
 
-static void parseOmsg(char * pMsg)
+void parseOmsg(char * pMsg, char *type, char *url)
 {
-    cJSON *pJson;
-    cJSON *pSub;
+	cJSON *pJson;
+	cJSON *pSub;
 
-    printf("\n\n@@@@@@@@@@ Start to print @@@@@@@@@@\n pMsg=%s\n\n", pMsg);
+	if(NULL == pMsg)
+	{
+		return;
+	}
 
-    if(NULL == pMsg)
-    {
-        return;
-    }
+	pJson = cJSON_Parse(pMsg);
+	if(NULL == pJson)
+	{
+		return;
+	}
 
-    pJson = cJSON_Parse(pMsg);
-    if(NULL == pJson)
-    {
-      return ;
-    }
+	pSub = cJSON_GetObjectItem(pJson, type);
+	if(pSub)
+	{
+		memcpy(url, pSub->valuestring, strlen(pSub->valuestring));
+		printf("%s = %s\n", type, url);
+	}
 
-    pSub = cJSON_GetObjectItem(pJson, "smallogo");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "CompanyType");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "Logo");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "CompanyInfoId");
-    if(pSub)
-    {
-        printf("%s = %d\n", pSub->string, pSub->valueint);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "DestnumDesc");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "CompanyAbb");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "DestnumFix");
-    if(pSub)
-    {
-        printf("%s = %d\n", pSub->string, pSub->valueint);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "WechatPublic");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "Returncode");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "LicenseNumber");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "Returnmessage");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "PhoneWeb");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "DestnumType");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "DestnumProv");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "DestnumSuffix");
-    if(pSub)
-    {
-        printf("%s = %d\n", pSub->string, pSub->valueint);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "ServiceTel");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "Company");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "ProName");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-
-    pSub = cJSON_GetObjectItem(pJson, "ManuAlias");
-    if(pSub)
-    {
-        printf("%s = %s\n", pSub->string, pSub->valuestring);
-    }
-    printf("\n@@@@@@@@@@ End of print @@@@@@@@@@\n\n", __func__, __LINE__);
-
-    cJSON_Delete(pJson);
+	cJSON_Delete(pJson);
+	return;
 }
 
 static http_parser *parser;
@@ -1165,6 +1056,7 @@ int s_client_main(int argc, char **argv)
     int c_status_req = 0;
 #endif
     BIO *bio_c_msg = NULL;
+    char url[64];
 
     FD_ZERO(&readfds);
     FD_ZERO(&writefds);
@@ -2627,7 +2519,10 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         else if (!ssl_pending && FD_ISSET(fileno_stdout(), &writefds))
 #endif
         {
-	parseOmsg(sbuf);
+	//parseOmsg(sbuf, "smallogo", url);
+	memset(url, 0, sizeof(url));
+	parseOmsg(sbuf, "Logo", url);
+	printf("smallogo = %s\n", url);
 #ifdef CHARSET_EBCDIC
             ascii2ebcdic(&(sbuf[sbuf_off]), &(sbuf[sbuf_off]), sbuf_len);
 #endif
@@ -2825,6 +2720,8 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
     bio_c_out = NULL;
     BIO_free(bio_c_msg);
     bio_c_msg = NULL;
+
+	get_image(url);
     return (ret);
 }
 
@@ -2856,15 +2753,14 @@ static double tminterval(struct timeval tmstart)
 
 #define IMAGE_TYPE_DEFAULT_EXT ".html"
 
-#if 1
-int s_k312_main(int argc, char **argv)
+int get_image(char *url)
 {
 	struct sockaddr_in address;
 	int client_sock;
 	int len,result;
 	int n,tmp;
-	char buffer[BUFSIZZ];
-	unsigned char *host;
+	char buffer[256];
+	char host[64];
 	short port = 80;
 	struct hostent *he;
 	struct in_addr **addr_list;
@@ -2880,17 +2776,24 @@ int s_k312_main(int argc, char **argv)
 	unsigned int http_buf_len = 0;
 	char *p;
 
+	if(url == NULL)
+		return EXIT_FAILURE;
+
 	http_buf = malloc(BUFSIZZ);
 	mbuf = malloc(BUFSIZZ);
 	parser = malloc(sizeof(http_parser));
 
 	memset(&http_img, 0, sizeof(http_img));
+	memset(buffer, 0, sizeof(buffer));
 	#if 1
-	host="admin.omsg.cn";
-	/*PNG*/char *buf = "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+	memcpy(buffer, url, strlen(url));
+	strtok(buffer, "/");
+	strcpy(host, strtok(NULL, "/"));
+	/*PNG*/sprintf(buffer, "GET %s HTTP/1.1\r\nHost: %s\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n", url, host);
+	printf("url = %s\nhost = %s\nbuffer=%s\n", url, host, buffer);
 	#else
-	host="pic67.nipic.com";
-	/*JPEG*/char *buf = "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+	strcpy(host, "pic67.nipic.com");
+	/*JPEG*/strcpy(buffer, "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n");
 	#endif
 
 	if ((he = gethostbyname(host)) == NULL) {  // get the host info
@@ -2898,7 +2801,7 @@ int s_k312_main(int argc, char **argv)
 		return 1;
 	}
 	printf("Official name is: %s\n", he->h_name);
-	printf("	IP addresses: ");
+	printf("IP addresses: ");
 	addr_list = (struct in_addr **)he->h_addr_list;
 	for(i = 0; addr_list[i] != NULL; i++) {
 		printf("\t%s \n", inet_ntoa(*addr_list[i]));
@@ -2916,7 +2819,7 @@ int s_k312_main(int argc, char **argv)
 		exit(-1);
 	}
 
-	n=write(client_sock,buf, strlen(buf));
+	n=write(client_sock,buffer, strlen(buffer));
 	if(n<0){
 		printf("error write/n");
 	}
@@ -2926,7 +2829,7 @@ int s_k312_main(int argc, char **argv)
 
 	//Parse http request.
 	http_parser_init(parser, HTTP_REQUEST);
-	parsed = http_parser_execute(parser, &settings_null, buf, strlen(buf));
+	parsed = http_parser_execute(parser, &settings_null, buffer, strlen(buffer));
 
 	/* Read past all following headers */
 	do {
@@ -2992,7 +2895,6 @@ int s_k312_main(int argc, char **argv)
 	return (EXIT_SUCCESS);
 }
 
-#else
 
 int s_k312_main(int argc, char **argv)
 {
@@ -3247,7 +3149,6 @@ int s_k312_main(int argc, char **argv)
     bio_c_msg = NULL;
     return (ret);
 }
-#endif
 
 static void print_stuff(BIO *bio, SSL *s, int full)
 {
