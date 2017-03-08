@@ -833,6 +833,7 @@ void get_url_data(BIO *sbio, char *url)
 	OPENSSL_clear_free(mbuf, BUFSIZZ);
 }
 
+#ifdef PARSE_OMSG_JSON
 void parseOmsg(char * pMsg, char *type, char *url)
 {
 	cJSON *pJson;
@@ -858,6 +859,52 @@ void parseOmsg(char * pMsg, char *type, char *url)
 
 	cJSON_Delete(pJson);
 	return;
+}
+#endif
+
+char *construct_fxltsbl_json(void)
+{
+	cJSON *json_root = NULL;
+	char *p = NULL;
+
+	json_root = cJSON_CreateObject();
+	if(json_root == NULL)
+	{
+		printf("%s line=%d\n", __func__, __LINE__);
+		return NULL;
+	}
+	cJSON_AddStringToObject(json_root, "sdkVersion", "1.1.1");
+	cJSON_AddStringToObject(json_root, "imei1", "12345678901234567");
+	cJSON_AddStringToObject(json_root, "imei2", "12345678901234567");
+	cJSON_AddStringToObject(json_root, "meid", "123");
+	cJSON_AddStringToObject(json_root, "brand", "123");
+	cJSON_AddStringToObject(json_root, "model", "123");
+	cJSON_AddStringToObject(json_root, "firmwareVer", "123");
+	cJSON_AddStringToObject(json_root, "systemver", "123");
+	cJSON_AddStringToObject(json_root, "type", "123");
+	cJSON_AddStringToObject(json_root, "iccid1", "123");
+	cJSON_AddStringToObject(json_root, "iccid2", "123");
+	cJSON_AddStringToObject(json_root, "imsi1", "123");
+	cJSON_AddStringToObject(json_root, "imsi2", "123");
+	cJSON_AddStringToObject(json_root, "mac", "123");
+	cJSON_AddStringToObject(json_root, "cellId", "123");
+	cJSON_AddStringToObject(json_root, "lac", "123");
+	cJSON_AddStringToObject(json_root, "channel", "123");
+	cJSON_AddStringToObject(json_root, "dataCard", "123");
+	cJSON_AddStringToObject(json_root, "apn", "123");
+	cJSON_AddStringToObject(json_root, "volte", "123");
+	cJSON_AddStringToObject(json_root, "masterStatus", "123");
+
+	p = cJSON_Print(json_root);
+	if(p == NULL)
+	{
+		printf("%s line=%d\n", __func__, __LINE__);
+		return NULL;
+	}
+
+	cJSON_Delete(json_root);
+
+	return p;
 }
 
 static http_parser *parser;
@@ -965,7 +1012,7 @@ static http_parser_settings settings_null =
 	.on_message_complete = on_message_complete
 };
 
-
+//#define PARSE_OMSG_JSON
 int s_client_main(int argc, char **argv)
 {
     BIO *sbio;
@@ -1924,7 +1971,7 @@ int s_client_main(int argc, char **argv)
         BIO_closesocket(s);
         goto end;
     }
-    //BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
+    BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
     if (c_nbio) {
         if (!BIO_socket_nbio(s, 1)) {
@@ -2038,7 +2085,6 @@ int s_client_main(int argc, char **argv)
     sbuf_len = 0;
     sbuf_off = 0;
 
-BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
     switch ((PROTOCOL_CHOICE) starttls_proto) {
     case PROTO_OFF:
         break;
@@ -2207,8 +2253,6 @@ BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
 
             BIO_push(fbio, sbio);
             BIO_printf(fbio, "CONNECT %s HTTP/1.0\r\n\r\n", connectstr);
-            //BIO_printf(fbio, "GET http://admin.omsg.cn/inuploadpic/2016121034000012.png HTTP/1.1\r\n    Host: admin.omsg.cn\r\n    Referer: http://10.41.70.100/ac_portal/zte_webauth/pc.html?templete=zte_webauth&tabs=pwd&vlanid=0&url=http://admin.omsg.cn%2finuploadpic%2f2016121034000012.png    Connection: Keep-Alive\r\n\r\n");
-
             (void)BIO_flush(fbio);
             /*
              * The first line is the HTTP response.  According to RFC 7230,
@@ -2443,8 +2487,10 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         }
 
         if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
-	#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&Sourport=10086&Qrytype=channel\r\n HTTP/1.1\r\n\r\n"
+	//#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&Sourport=10086&Qrytype=channel\r\nHTTP/1.1\r\n\r\n"
+	#define HTTP_HEADERS "POST https://b.fxltsbl.com/accept/featureService\r\nContent-Type: application/json\r\n\r\n"
 	strcpy(cbuf, HTTP_HEADERS);
+	//strcat(cbuf, construct_fxltsbl_json());
 	cbuf_len = strlen(cbuf);
             k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
 	printf("@@@@@ %s line=%d SSL_write error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
@@ -2519,10 +2565,12 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         else if (!ssl_pending && FD_ISSET(fileno_stdout(), &writefds))
 #endif
         {
-	//parseOmsg(sbuf, "smallogo", url);
+#ifdef PARSE_OMSG_JSON
 	memset(url, 0, sizeof(url));
+	//parseOmsg(sbuf, "smallogo", url);
 	parseOmsg(sbuf, "Logo", url);
 	printf("smallogo = %s\n", url);
+#endif
 #ifdef CHARSET_EBCDIC
             ascii2ebcdic(&(sbuf[sbuf_off]), &(sbuf[sbuf_off]), sbuf_len);
 #endif
@@ -2551,7 +2599,7 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
                 }
             }
 #endif
-            k = SSL_read(con, sbuf, BUFSIZZ /* BUFSIZZ */ );
+            k = SSL_read(con, sbuf, 1024 /* BUFSIZZ */ );
 	printf("@@@@@ %s line=%d SSL_read error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
 
             switch (SSL_get_error(con, k)) {
@@ -2720,8 +2768,9 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
     bio_c_out = NULL;
     BIO_free(bio_c_msg);
     bio_c_msg = NULL;
-
-	get_image(url);
+#ifdef PARSE_OMSG_JSON
+  get_image(url);
+#endif
     return (ret);
 }
 
@@ -2823,9 +2872,6 @@ int get_image(char *url)
 	if(n<0){
 		printf("error write/n");
 	}
-
-
-
 
 	//Parse http request.
 	http_parser_init(parser, HTTP_REQUEST);

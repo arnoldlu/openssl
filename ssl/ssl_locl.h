@@ -67,10 +67,6 @@
 # include "packet_locl.h"
 # include "internal/dane.h"
 
-#ifndef SSL_DEBUG
-#define SSL_DEBUG
-#endif
-
 # ifdef OPENSSL_BUILD_SHLIBSSL
 #  undef OPENSSL_EXTERN
 #  define OPENSSL_EXTERN OPENSSL_EXPORT

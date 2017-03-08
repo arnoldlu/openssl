@@ -1646,10 +1646,10 @@ static int aes_gcm_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
 {
     EVP_AES_GCM_CTX *gctx = EVP_C_DATA(EVP_AES_GCM_CTX,ctx);
     /* If not set up, return error */
-if(out != NULL)
-	printf("@@@@@ %s line=%d out=%s key_set=%d tls_aad_len=%d\n", __func__, __LINE__, out, gctx->key_set, gctx->tls_aad_len);
-if(in != NULL)
-	printf("@@@@@ %s line=%d in=%s\n", __func__, __LINE__, in);
+//if(out != NULL)
+//	printf("@@@@@ %s line=%d out=%s key_set=%d tls_aad_len=%d\n", __func__, __LINE__, out, gctx->key_set, gctx->tls_aad_len);
+//if(in != NULL)
+//	printf("@@@@@ %s line=%d in=%s\n", __func__, __LINE__, in);
     if (!gctx->key_set)
         return -1;
 
