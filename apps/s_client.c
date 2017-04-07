@@ -81,6 +81,8 @@ typedef unsigned int u_int;
 # endif
 #endif
 
+#include <openssl/aes.h>
+
 #undef BUFSIZZ
 #define BUFSIZZ 1024*8
 #define S_CLIENT_IRC_READ_TIMEOUT 8
@@ -733,10 +735,14 @@ OPTIONS s_client_options[] = {
 
 OPTIONS s_k312_options[] = {
     {"help", OPT_HELP, '-', "Display this summary"},
-    {"connect", OPT_CONNECT, 's',
-     "TCP/IP where to connect (default is :" PORT ")"},
-    {"proxy", OPT_PROXY, 's',
-     "Connect to via specified proxy to the real server"},
+    {
+        "connect", OPT_CONNECT, 's',
+        "TCP/IP where to connect (default is :" PORT ")"
+    },
+    {
+        "proxy", OPT_PROXY, 's',
+        "Connect to via specified proxy to the real server"
+    },
     {NULL, OPT_EOF, 0x00, NULL}
 };
 
@@ -781,238 +787,281 @@ static void freeandcopy(char **dest, const char *source)
     if (source != NULL)
         *dest = OPENSSL_strdup(source);
 }
-#define CHK_NULL(x) if ((x)==NULL) exit (1)
-#define CHK_ERR(err,s) if ((err)==-1) { perror(s); exit(1); }
-#define CHK_SSL(err) if ((err)==-1) { ERR_print_errors_fp(stderr); exit(2); }
 
-void get_url_data(BIO *sbio, char *url)
+//#define CMCC_DM_SUPPORT
+//#define CMCC_ISMS_SUPPORT
+#define CMCC_ISMS_LOG_SUPPORT
+
+#if defined(CMCC_ISMS_SUPPORT)||defined(CMCC_ISMS_LOG_SUPPORT)
+void parse_json_string(char * pMsg, char *name, char *value)
 {
-	char *mbuf = NULL;
-	int mbuf_len = 0;
-	int s = -1;
+    cJSON *pJson;
+    cJSON *pSub;
 
-	enum {
-		error_proto,	 /* Wrong protocol, not even HTTP */
-		error_connect,	 /* CONNECT failed */
-		success
-	} foundit = error_connect;
-	printf("@@@@@ %s line=%d url=%s\n", __func__, __LINE__, url);
-	mbuf = app_malloc(BUFSIZZ, "url");
-	//sbio = BIO_new_socket(s, BIO_NOCLOSE);
+    if(NULL == pMsg) {
+        return;
+    }
 
-	BIO *fbio = BIO_new(BIO_f_buffer());
+    pJson = cJSON_Parse(pMsg);
+    if(NULL == pJson) {
+        return;
+    }
 
-	BIO_push(fbio, sbio);
-	BIO_printf(fbio, "%s", url);
-	(void)BIO_flush(fbio);
-	/*
-	* The first line is the HTTP response.  According to RFC 7230,
-	* it's formated exactly like this:
-	*
-	* HTTP/d.d ddd Reason text\r\n
-	*/
-	mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-	printf("@@@@@ mbuf=%s mbuf_len=%d\n", mbuf, mbuf_len);
-	if (mbuf[8] != ' ') {
-		printf("%s: HTTP CONNECT failed, incorrect response from proxy\n", prog);
-		foundit = error_proto;
-	} else if (mbuf[9] != '2') {
-		printf("%s: HTTP CONNECT failed: %s ", prog,&mbuf[9]);
-	} else {
-		foundit = success;
-	}
-	if (foundit != error_proto) {
-	/* Read past all following headers */
-		do {
-			mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-		} while (mbuf_len > 2);
-	}
-           (void)BIO_flush(fbio);
-           BIO_pop(fbio);
-           BIO_free(fbio);
-	OPENSSL_clear_free(mbuf, BUFSIZZ);
-}
+    pSub = cJSON_GetObjectItem(pJson, name);
+    if(pSub) {
+        strcpy(value, pSub->valuestring);
+        printf("%s = %s\n", name, value);
+    }
 
-#ifdef PARSE_OMSG_JSON
-void parseOmsg(char * pMsg, char *type, char *url)
-{
-	cJSON *pJson;
-	cJSON *pSub;
-
-	if(NULL == pMsg)
-	{
-		return;
-	}
-
-	pJson = cJSON_Parse(pMsg);
-	if(NULL == pJson)
-	{
-		return;
-	}
-
-	pSub = cJSON_GetObjectItem(pJson, type);
-	if(pSub)
-	{
-		memcpy(url, pSub->valuestring, strlen(pSub->valuestring));
-		printf("%s = %s\n", type, url);
-	}
-
-	cJSON_Delete(pJson);
-	return;
+    cJSON_Delete(pJson);
+    return;
 }
 #endif
 
+#ifdef CMCC_DM_SUPPORT
 char *construct_fxltsbl_json(void)
 {
-	cJSON *json_root = NULL;
-	char *p = NULL;
+    cJSON *json_root = NULL;
+    char *p = NULL;
 
-	json_root = cJSON_CreateObject();
-	if(json_root == NULL)
-	{
-		printf("%s line=%d\n", __func__, __LINE__);
-		return NULL;
-	}
-	cJSON_AddStringToObject(json_root, "sdkVersion", "1.1.1");
-	cJSON_AddStringToObject(json_root, "imei1", "12345678901234567");
-	cJSON_AddStringToObject(json_root, "imei2", "12345678901234567");
-	cJSON_AddStringToObject(json_root, "meid", "123");
-	cJSON_AddStringToObject(json_root, "brand", "123");
-	cJSON_AddStringToObject(json_root, "model", "123");
-	cJSON_AddStringToObject(json_root, "firmwareVer", "123");
-	cJSON_AddStringToObject(json_root, "systemver", "123");
-	cJSON_AddStringToObject(json_root, "type", "123");
-	cJSON_AddStringToObject(json_root, "iccid1", "123");
-	cJSON_AddStringToObject(json_root, "iccid2", "123");
-	cJSON_AddStringToObject(json_root, "imsi1", "123");
-	cJSON_AddStringToObject(json_root, "imsi2", "123");
-	cJSON_AddStringToObject(json_root, "mac", "123");
-	cJSON_AddStringToObject(json_root, "cellId", "123");
-	cJSON_AddStringToObject(json_root, "lac", "123");
-	cJSON_AddStringToObject(json_root, "channel", "123");
-	cJSON_AddStringToObject(json_root, "dataCard", "123");
-	cJSON_AddStringToObject(json_root, "apn", "123");
-	cJSON_AddStringToObject(json_root, "volte", "123");
-	cJSON_AddStringToObject(json_root, "masterStatus", "123");
+    json_root = cJSON_CreateObject();
+    if(json_root == NULL) {
+        printf("%s line=%d\n", __func__, __LINE__);
+        return NULL;
+    }
+    cJSON_AddStringToObject(json_root, "sdkVersion", "1.1.1");
+    cJSON_AddStringToObject(json_root, "imei1", "862340030002627");
+    cJSON_AddStringToObject(json_root, "imei2", "0");
+    cJSON_AddStringToObject(json_root, "meid", "0");
+    cJSON_AddStringToObject(json_root, "brand", "OK-W5");
+    cJSON_AddStringToObject(json_root, "model", "OK-W5");
+    cJSON_AddStringToObject(json_root, "firmwareVer", "123");
+    cJSON_AddStringToObject(json_root, "systemver", "1");
+    cJSON_AddStringToObject(json_root, "type", "123");
+    cJSON_AddStringToObject(json_root, "iccid1", "89860115834047589085");
+    cJSON_AddStringToObject(json_root, "iccid2", "0");
+    cJSON_AddStringToObject(json_root, "imsi1", "460011035377979");
+    cJSON_AddStringToObject(json_root, "imsi2", "0");
+    cJSON_AddStringToObject(json_root, "mac", "0");
+    cJSON_AddStringToObject(json_root, "cellId", "05004A15");
+    cJSON_AddStringToObject(json_root, "lac", "D10B");
+    cJSON_AddStringToObject(json_root, "channel", "0");
+    cJSON_AddStringToObject(json_root, "dataCard", "0");
+    cJSON_AddStringToObject(json_root, "apn", "cmnet");
+    cJSON_AddStringToObject(json_root, "volte", "0");
+    cJSON_AddStringToObject(json_root, "masterStatus", "0");
 
-	p = cJSON_Print(json_root);
-	if(p == NULL)
-	{
-		printf("%s line=%d\n", __func__, __LINE__);
-		return NULL;
-	}
+    p = cJSON_PrintUnformatted(json_root);
+    if(p == NULL) {
+        printf("%s line=%d\n", __func__, __LINE__);
+        return NULL;
+    }
 
-	cJSON_Delete(json_root);
+    cJSON_Delete(json_root);
 
-	return p;
+    return p;
 }
 
+void parse_json_int(char *pMsg, char *name, int value)
+{
+    cJSON *pJson;
+    cJSON *pSub;
+
+    if(NULL == pMsg || NULL == name) {
+        printf("NULL pointer json\n");
+        return;
+    }
+
+    pJson = cJSON_Parse(pMsg);
+    if(NULL == pJson) {
+        printf("NULL pointer pJson\n");
+        return;
+    }
+
+    pSub = cJSON_GetObjectItem(pJson, name);
+    if(pSub) {
+        value = pSub->valueint;
+        printf("%s = %d\n", name, value);
+    }
+
+    cJSON_Delete(pJson);
+}
+#endif
+
+#ifdef CMCC_ISMS_LOG_SUPPORT
+char *construct_log_json(void)
+{
+    cJSON *json_root = NULL;
+    char *p = NULL;
+
+    json_root = cJSON_CreateObject();
+    if(json_root == NULL) {
+        printf("%s line=%d\n", __func__, __LINE__);
+        return NULL;
+    }
+    cJSON_AddNumberToObject(json_root, "event_type", 100);
+    cJSON_AddStringToObject(json_root, "imei", "864595024277513");
+    cJSON_AddStringToObject(json_root, "iccid", "898600a3031600149699");
+    cJSON_AddStringToObject(json_root, "device_id", "");
+    cJSON_AddNumberToObject(json_root, "occur_time", 1490198400000);
+    cJSON_AddStringToObject(json_root, "manufacturer", "");
+    cJSON_AddStringToObject(json_root, "imsi", "");
+    cJSON_AddStringToObject(json_root, "phone_model", "");
+    cJSON_AddStringToObject(json_root, "android_version", "");
+    cJSON_AddStringToObject(json_root, "sdk_version_code", "");
+    cJSON_AddStringToObject(json_root, "sdk_version_name", "");
+    cJSON_AddStringToObject(json_root, "phone_number", "");
+    cJSON_AddStringToObject(json_root, "app_version_code", "");
+    cJSON_AddStringToObject(json_root, "app_version_name", "");
+    cJSON_AddStringToObject(json_root, "package_name", "");
+    cJSON_AddStringToObject(json_root, "menu_name", "");
+    cJSON_AddStringToObject(json_root, "app_name", "");
+    cJSON_AddStringToObject(json_root, "model_id", "");
+    cJSON_AddStringToObject(json_root, "ext_1", "");
+    cJSON_AddStringToObject(json_root, "ext_2", "");
+    cJSON_AddStringToObject(json_root, "ext_3", "");
+    cJSON_AddStringToObject(json_root, "ext_4", "");
+
+    p = cJSON_PrintUnformatted(json_root);
+    if(p == NULL) {
+        printf("%s line=%d\n", __func__, __LINE__);
+        return NULL;
+    }
+
+    cJSON_Delete(json_root);
+
+    return p;
+}
+#endif
+
 static http_parser *parser;
-struct http_content{
-	char type[32];
-	unsigned int response_size;
-	unsigned int content_size;
-	char *content_start;
-	char header_checked;
-	char mem_realloced;
-}http_img ;
+struct http_content {
+    char type[32];
+    unsigned int response_size;
+    unsigned int content_size;
+    char *content_start;
+    char header_checked;
+    char mem_realloced;
+} http_img ;
 
 int on_message_begin(http_parser* _)
 {
-	(void)_;
-	printf("\n***MESSAGE BEGIN***\n\n");
-	return 0;
+    (void) _;
+    printf("\n***MESSAGE BEGIN***\n\n");
+    return 0;
 }
 
 int on_headers_complete(http_parser* _)
 {
-	(void)_;
-	printf("\n***HEADERS COMPLETE***\n\n");
-	return 0;
+    (void) _;
+    printf("\n***HEADERS COMPLETE***\n\n");
+    return 0;
 }
 
 int on_message_complete(http_parser* _)
-	{
-	(void)_;
-	printf("\n***MESSAGE COMPLETE***\n\n");
-	return 0;
+{
+    (void) _;
+    printf("\n***MESSAGE COMPLETE***\n\n");
+    return 0;
 }
 
 int on_url(http_parser* _, const char* at, size_t length)
 {
-	(void)_;
-	printf("Url: %.*s\n", (int)length, at);
-	return 0;
+    (void) _;
+    printf("Url: %.*s\n", (int) length, at);
+    return 0;
 }
 char content_type_flag = 0;
 char content_length_flag = 0;
 int on_header_field(http_parser* _, const char* at, size_t length)
 {
-	(void)_;
-	printf("Header field: %.*s\n", (int)length, at);
-	if(!memcmp("Content-Type", at, length))
-	{
-		//printf("Found Content-Type\n");
-		content_type_flag = 1;
-	}
-	if(!memcmp("Content-Length", at, length))
-	{
-		//printf("Found Content-Length\n");
-		content_length_flag = 1;
-	}
+    (void) _;
+    printf("Header field: %.*s\n", (int) length, at);
+    if(!memcmp("Content-Type", at, length)) {
+        //printf("Found Content-Type\n");
+        content_type_flag = 1;
+    }
+    if(!memcmp("Content-Length", at, length)) {
+        //printf("Found Content-Length\n");
+        content_length_flag = 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int on_header_value(http_parser* _, const char* at, size_t length)
 {
-	(void)_;
-	printf("Header value: %.*s\n", (int)length, at);
-	if(content_type_flag)
-	{
-		memcpy(http_img.type, at, length);
-		//printf("http_img.type = %s\n", http_img.type);
-		content_type_flag = 0;
-	}
+    (void) _;
+    printf("Header value: %.*s\n", (int) length, at);
+    if(content_type_flag) {
+        memcpy(http_img.type, at, length);
+        //printf("http_img.type = %s\n", http_img.type);
+        content_type_flag = 0;
+    }
 
-	if(content_length_flag)
-	{
-		char value[32];
-		memcpy(value, at, length);
-		//printf("http_img.content_size = %s\n", value);
-		http_img.content_size = atoi(value);
-		content_length_flag = 0;
-	}
-	return 0;
+    if(content_length_flag) {
+        char value[32];
+        memcpy(value, at, length);
+        //printf("http_img.content_size = %s\n", value);
+        http_img.content_size = atoi(value);
+        content_length_flag = 0;
+    }
+    return 0;
 }
 
 int on_body(http_parser* _, const char* at, size_t length)
 {
-	(void)_;
-	unsigned int z;
-	char *p = at;
+    (void) _;
 
-	http_img.content_start=at;
-//	if(!memcmp("image/png", http_img.type, strlen("image/png")))
-//	{
-//		printf("Found PNG body!http_img.content_start=%p\n", http_img.content_start);
-//	}
-	return 0;
+    printf("HTTP body: %.*s\n", (int) length, at);
+    http_img.content_start = at;
+    printf("http_img.content_start=%s\n", http_img.content_start);
+
+    return 0;
 }
 
-static http_parser_settings settings_null =
-{
-	.on_message_begin = on_message_begin,
-	.on_header_field = on_header_field,
-	.on_header_value = on_header_value,
-	.on_url = on_url,
-	.on_status = 0,
-	.on_body = on_body,
-	.on_headers_complete = on_headers_complete,
-	.on_message_complete = on_message_complete
+static http_parser_settings settings_null = {
+    .on_message_begin = on_message_begin,
+    .on_header_field = on_header_field,
+    .on_header_value = on_header_value,
+    .on_url = on_url,
+    .on_status = 0,
+    .on_body = on_body,
+    .on_headers_complete = on_headers_complete,
+    .on_message_complete = on_message_complete
 };
 
-//#define PARSE_OMSG_JSON
+#if defined(CMCC_DM_SUPPORT)||defined(CMCC_ISMS_SUPPORT)||defined(CMCC_ISMS_LOG_SUPPORT)
+void get_http_response_body(char *reponse)
+{
+    http_parser parser;
+
+    //Reparse http response, in case realloc change the http_buf address.
+    http_parser_init(&parser, HTTP_RESPONSE);
+    http_parser_execute(&parser, &settings_null, reponse, strlen(reponse));
+}
+#endif
+void AES_set_padding(char * to_padding)
+{
+    unsigned char padding_counts = 0;
+    char *padding_str = NULL;
+    char index = 0;
+
+    padding_counts = AES_BLOCK_SIZE - strlen(to_padding) % AES_BLOCK_SIZE;
+    if(padding_counts == AES_BLOCK_SIZE)
+        return;
+
+    padding_str = malloc(padding_counts + 1);
+    memset(padding_str, 0, sizeof(padding_str));
+
+    for(index = 0; index < padding_counts; index++)
+        * (padding_str + index) = padding_counts;
+    printf("to_padding=%d, padding_counts=%d, padding_str = %s, strlen(padding_str)=%d\n", strlen(to_padding), padding_counts, padding_str, strlen(padding_str));
+    strcat(to_padding, padding_str);
+
+    free(padding_str);
+}
+
 int s_client_main(int argc, char **argv)
 {
     BIO *sbio;
@@ -1103,7 +1152,15 @@ int s_client_main(int argc, char **argv)
     int c_status_req = 0;
 #endif
     BIO *bio_c_msg = NULL;
+#if defined(CMCC_ISMS_SUPPORT)||defined(CMCC_ISMS_LOG_SUPPORT)
     char url[64];
+    char *isms_log_json = NULL;
+#endif
+#ifdef CMCC_DM_SUPPORT
+    int resultCode = 0;
+    char *fxltsbl_json = NULL;
+    int result = 0;
+#endif
 
     FD_ZERO(&readfds);
     FD_ZERO(&writefds);
@@ -2358,7 +2415,6 @@ int s_client_main(int argc, char **argv)
             timeoutp = &timeout;
         else
             timeoutp = NULL;
-printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
 
         if (SSL_in_init(con) && !SSL_total_renegotiations(con)) {
             in_init = 1;
@@ -2487,13 +2543,69 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         }
 
         if (!ssl_pending && FD_ISSET(SSL_get_fd(con), &writefds)) {
-	//#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&Sourport=10086&Qrytype=channel\r\nHTTP/1.1\r\n\r\n"
-	#define HTTP_HEADERS "POST https://b.fxltsbl.com/accept/featureService\r\nContent-Type: application/json\r\n\r\n"
-	strcpy(cbuf, HTTP_HEADERS);
-	//strcat(cbuf, construct_fxltsbl_json());
-	cbuf_len = strlen(cbuf);
-            k = SSL_write(con, &(cbuf[cbuf_off]), (unsigned int)cbuf_len);
-	printf("@@@@@ %s line=%d SSL_write error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
+
+#if defined(CMCC_ISMS_SUPPORT)
+#define HTTP_HEADERS "POST https://221.176.66.230:20001/api/smschannelmenu?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&Sourport=10086&Qrytype=channel HTTP/1.1\r\n\r\n"
+            strcpy(cbuf, HTTP_HEADERS);
+#elif defined(CMCC_ISMS_LOG_SUPPORT)
+            isms_log_json = construct_log_json();
+            if(isms_log_json != NULL)
+                sprintf(cbuf, "POST https://221.176.66.230:20001/api/saveDaRecord?Username=waterworld&Apikey=9627a37b19d246ae8e2add1ed8ca2602&Iccid=898600F0101650054774&DaRecord=[%s] HTTP/1.1\r\n\r\n", isms_log_json);
+            if(isms_log_json != NULL)
+                free(isms_log_json);
+#elif defined(CMCC_DM_SUPPORT)
+#define HTTP_HEADERS "POST /accept/featureService?func=tsdk:postotherreg&appkey=A100000853 HTTP/1.1\r\nContent-Type: application/json;charset=utf-8\r\nHost: b.fxltsbl.com\r\n\r\n"
+
+            fxltsbl_json = construct_fxltsbl_json();
+#if 1
+            if(fxltsbl_json != NULL)
+                sprintf(cbuf, "POST /accept/featureService?func=tsdk:postotherreg&appkey=A100000853 HTTP/1.1\r\nContent-Type: application/json;charset=utf-8\r\nContent-Length: %d\r\nHost: b.fxltsbl.com\r\n\r\n%s\r\n",
+                        strlen(fxltsbl_json), fxltsbl_json);
+#else
+            //AES/ECB/PKCS5Padding test start
+            AES_KEY aes_key;
+            unsigned char initial_data[512] = "0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyzarnoldlu";
+            unsigned char encrypted_data[1024];
+            unsigned char decrypted_data[1024];
+            const unsigned char *user_key = "012345678012345678";
+            char crypt_count = 0;
+
+            //Initial padding
+            AES_set_padding(fxltsbl_json);
+
+            //Encrypted data
+            memset(encrypted_data, 0, sizeof(encrypted_data));
+
+            result = AES_set_encrypt_key(user_key, 128, &aes_key);
+            if(result != 0)
+                printf("Set encrypt key failed.\n");
+
+            for(crypt_count = 0; crypt_count < strlen(fxltsbl_json) / AES_BLOCK_SIZE; crypt_count++) {
+                AES_ecb_encrypt(fxltsbl_json + crypt_count * AES_BLOCK_SIZE, encrypted_data + crypt_count * AES_BLOCK_SIZE, &aes_key, 1);
+            }
+            printf("fxltsbl_json %d=%s, encrypted_data %d=%s\n", strlen(fxltsbl_json), fxltsbl_json, strlen(encrypted_data), encrypted_data);
+
+            //Decrypted data
+            memset(decrypted_data, 0, sizeof(decrypted_data));
+
+            result = AES_set_decrypt_key(user_key, 128, &aes_key);
+            if(result != 0)
+                printf("Set decrypt key failed.\n");
+
+            for(crypt_count = 0; crypt_count < strlen(fxltsbl_json) / AES_BLOCK_SIZE; crypt_count++) {
+                AES_ecb_encrypt(encrypted_data + crypt_count * AES_BLOCK_SIZE, decrypted_data + crypt_count * AES_BLOCK_SIZE, &aes_key, 0);
+            }
+            printf("encrypted_data %d=%s, decrypted_data %d=%s\n", strlen(encrypted_data), encrypted_data, strlen(decrypted_data), decrypted_data);
+            //AES/ECB/PKCS5Padding test end
+#endif
+
+            if(fxltsbl_json != NULL)
+                free(fxltsbl_json);
+#endif
+            cbuf_len = strlen(cbuf);
+            k = SSL_write(con, & (cbuf[cbuf_off]), (unsigned int) cbuf_len);
+//	printf("@@@@@ cbuf[cbuf_off]=%s cbuf_len=%d\n", &cbuf[cbuf_off] , cbuf_len );
+//	printf("@@@@@ %s line=%d SSL_write error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
             switch (SSL_get_error(con, k)) {
             case SSL_ERROR_NONE:
                 cbuf_off += k;
@@ -2565,12 +2677,6 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
         else if (!ssl_pending && FD_ISSET(fileno_stdout(), &writefds))
 #endif
         {
-#ifdef PARSE_OMSG_JSON
-	memset(url, 0, sizeof(url));
-	//parseOmsg(sbuf, "smallogo", url);
-	parseOmsg(sbuf, "Logo", url);
-	printf("smallogo = %s\n", url);
-#endif
 #ifdef CHARSET_EBCDIC
             ascii2ebcdic(&(sbuf[sbuf_off]), &(sbuf[sbuf_off]), sbuf_len);
 #endif
@@ -2600,7 +2706,26 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
             }
 #endif
             k = SSL_read(con, sbuf, 1024 /* BUFSIZZ */ );
-	printf("@@@@@ %s line=%d SSL_read error=%d\n", __func__, __LINE__, SSL_get_error(con, k));
+#if defined(CMCC_DM_SUPPORT)
+            printf("@@@@@http reponse start@@@@@\n%s\n@@@@@http reponse end@@@@@\n", sbuf);
+            get_http_response_body(sbuf);
+            parse_json_int(http_img.content_start, "resultCode", resultCode);
+#endif
+#if defined(CMCC_ISMS_SUPPORT)
+            printf("@@@@@http reponse start@@@@@\n%s\n@@@@@http reponse end@@@@@\n", sbuf);
+            get_http_response_body(sbuf);
+            parse_json_string(http_img.content_start, "Logo", url);
+            parse_json_string(http_img.content_start, "Company", url);
+            parse_json_string(http_img.content_start, "ProName", url);
+#endif
+#if defined(CMCC_ISMS_LOG_SUPPORT)
+            printf("@@@@@http reponse start@@@@@\n%s\n@@@@@http reponse end@@@@@\n", sbuf);
+            get_http_response_body(sbuf);
+            parse_json_string(http_img.content_start, "Returncode", url);
+            parse_json_string(http_img.content_start, "Returnmessage", url);
+#endif
+
+
 
             switch (SSL_get_error(con, k)) {
             case SSL_ERROR_NONE:
@@ -2681,7 +2806,6 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
                 assert(lf_num == 0);
             } else
                 i = raw_read_stdin(cbuf, BUFSIZZ);
-	printf("@@@@@ %s line=%d raw_read_stdin cbuf=%s\n", __func__, __LINE__, cbuf);
 #if !defined(OPENSSL_SYS_WINDOWS) && !defined(OPENSSL_SYS_MSDOS)
             if (i == 0)
                 at_eof = 1;
@@ -2768,27 +2892,28 @@ printf("\n\n@@@@@ %s line=%d for entity\n\n", __func__, __LINE__);
     bio_c_out = NULL;
     BIO_free(bio_c_msg);
     bio_c_msg = NULL;
-#ifdef PARSE_OMSG_JSON
-  get_image(url);
+#ifdef CMCC_ISMS_SUPPORT
+    get_image(url);
 #endif
     return (ret);
 }
+
 
 # include <sys/time.h>
 # include <sys/resource.h>
 
 static double tminterval(struct timeval tmstart)
 {
-	double ret = 0;
-	struct timeval now;
+    double ret = 0;
+    struct timeval now;
 
-	gettimeofday(&now, NULL);
+    gettimeofday(&now, NULL);
 
-	ret = ((now.tv_sec + now.tv_usec * 1e-6)
-	- (tmstart.tv_sec + tmstart.tv_usec * 1e-6));
-	tmstart = now;
+    ret = ((now.tv_sec + now.tv_usec * 1e-6)
+           - (tmstart.tv_sec + tmstart.tv_usec * 1e-6));
+    tmstart = now;
 
-	return ret;
+    return ret;
 }
 
 #define IMAGE_TYPE_PNG "image/png"
@@ -2802,146 +2927,145 @@ static double tminterval(struct timeval tmstart)
 
 #define IMAGE_TYPE_DEFAULT_EXT ".html"
 
+#ifdef CMCC_ISMS_SUPPORT
 int get_image(char *url)
 {
-	struct sockaddr_in address;
-	int client_sock;
-	int len,result;
-	int n,tmp;
-	char buffer[256];
-	char host[64];
-	short port = 80;
-	struct hostent *he;
-	struct in_addr **addr_list;
-	int i;
-	struct timeval tmstart;
-	char *mbuf = NULL;
-	int mbuf_len = 0;
-	char outfile[20] = "logo";
-	char *file_ext;
-	FILE *fp;
-	size_t parsed;
-	char *http_buf;
-	unsigned int http_buf_len = 0;
-	char *p;
+    struct sockaddr_in address;
+    int client_sock;
+    int len, result;
+    int n, tmp;
+    char buffer[256];
+    char host[64];
+    short port = 80;
+    struct hostent *he;
+    struct in_addr **addr_list;
+    int i;
+    struct timeval tmstart;
+    char *mbuf = NULL;
+    int mbuf_len = 0;
+    char outfile[20] = "logo";
+    char *file_ext;
+    FILE *fp;
+    size_t parsed;
+    char *http_buf;
+    unsigned int http_buf_len = 0;
+    char *p;
 
-	if(url == NULL)
-		return EXIT_FAILURE;
+    if(url == NULL)
+        return EXIT_FAILURE;
 
-	http_buf = malloc(BUFSIZZ);
-	mbuf = malloc(BUFSIZZ);
-	parser = malloc(sizeof(http_parser));
+    http_buf = malloc(BUFSIZZ);
+    mbuf = malloc(BUFSIZZ);
+    parser = malloc(sizeof(http_parser));
 
-	memset(&http_img, 0, sizeof(http_img));
-	memset(buffer, 0, sizeof(buffer));
-	#if 1
-	memcpy(buffer, url, strlen(url));
-	strtok(buffer, "/");
-	strcpy(host, strtok(NULL, "/"));
-	/*PNG*/sprintf(buffer, "GET %s HTTP/1.1\r\nHost: %s\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n", url, host);
-	printf("url = %s\nhost = %s\nbuffer=%s\n", url, host, buffer);
-	#else
-	strcpy(host, "pic67.nipic.com");
-	/*JPEG*/strcpy(buffer, "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n");
-	#endif
+    memset(&http_img, 0, sizeof(http_img));
+    memset(buffer, 0, sizeof(buffer));
+#if 1
+    memcpy(buffer, url, strlen(url));
+    strtok(buffer, "/");
+    strcpy(host, strtok(NULL, "/"));
+    /*PNG*/sprintf(buffer, "GET %s HTTP/1.1\r\nHost: %s\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n", url, host);
+    printf("url = %s\nhost = %s\nbuffer=%s\n", url, host, buffer);
+#else
+    strcpy(host, "pic67.nipic.com");
+    /*JPEG*/strcpy(buffer, "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n");
+#endif
 
-	if ((he = gethostbyname(host)) == NULL) {  // get the host info
-		printf("gethostbyname error");
-		return 1;
-	}
-	printf("Official name is: %s\n", he->h_name);
-	printf("IP addresses: ");
-	addr_list = (struct in_addr **)he->h_addr_list;
-	for(i = 0; addr_list[i] != NULL; i++) {
-		printf("\t%s \n", inet_ntoa(*addr_list[i]));
-	}
+    if((he = gethostbyname(host)) == NULL) {    // get the host info
+        printf("gethostbyname error\n");
+        return 1;
+    }
+    printf("Official name is: %s\n", he->h_name);
+    printf("IP addresses: ");
+    addr_list = (struct in_addr **) he->h_addr_list;
+    for(i = 0; addr_list[i] != NULL; i++) {
+        printf("\t%s \n", inet_ntoa(*addr_list[i]));
+    }
 
-	client_sock=socket(AF_INET,SOCK_STREAM,0);
-	address.sin_addr.s_addr=inet_addr(inet_ntoa(*addr_list[0]));
-	address.sin_family=AF_INET;
-	address.sin_port=htons(port);
-	len=sizeof(address);
+    client_sock = socket(AF_INET, SOCK_STREAM, 0);
+    address.sin_addr.s_addr = inet_addr(inet_ntoa(*addr_list[0]));
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port);
+    len = sizeof(address);
 
-	result=connect(client_sock,(struct sockaddr *)&address,len);
-	if(result==-1){
-		printf("error!");
-		exit(-1);
-	}
+    result = connect(client_sock, (struct sockaddr *) &address, len);
+    if(result == -1) {
+        printf("error!");
+        exit(-1);
+    }
 
-	n=write(client_sock,buffer, strlen(buffer));
-	if(n<0){
-		printf("error write/n");
-	}
+    n = write(client_sock, buffer, strlen(buffer));
+    if(n < 0) {
+        printf("error write/n");
+    }
 
-	//Parse http request.
-	http_parser_init(parser, HTTP_REQUEST);
-	parsed = http_parser_execute(parser, &settings_null, buffer, strlen(buffer));
+    //Parse http request.
+    http_parser_init(parser, HTTP_REQUEST);
+    parsed = http_parser_execute(parser, &settings_null, buffer, strlen(buffer));
 
-	/* Read past all following headers */
-	do {
-		if((http_img.response_size>BUFSIZZ) && (!http_img.mem_realloced))
-		{
-		//Need more memory, realloc it.
-			http_buf = realloc(http_buf,http_img.response_size);
-			http_img.mem_realloced = 1;
-			printf("realloc memory size to %d\n", http_img.response_size);
-		}
-		memcpy(http_buf+http_buf_len, mbuf, mbuf_len);
-		http_buf_len += mbuf_len;
-		mbuf_len = recv(client_sock,mbuf,sizeof(mbuf),0);
-		//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
-		if(!http_img.header_checked && (http_buf_len>1024))
-		{
-		//Parse http response
-			http_parser_init(parser, HTTP_RESPONSE);
-			parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
-			http_img.response_size = http_img.content_start - http_buf + http_img.content_size;
-			printf("response_size=%d content_size=%d\n", http_img.response_size, http_img.content_size);
-			http_img.header_checked =1;
-		}
-	} while (mbuf_len > 0);
+    /* Read past all following headers */
+    do {
+        if((http_img.response_size > BUFSIZZ) && (!http_img.mem_realloced)) {
+            //Need more memory, realloc it.
+            http_buf = realloc(http_buf, http_img.response_size);
+            http_img.mem_realloced = 1;
+            printf("realloc memory size to %d\n", http_img.response_size);
+        }
+        memcpy(http_buf + http_buf_len, mbuf, mbuf_len);
+        http_buf_len += mbuf_len;
+        mbuf_len = recv(client_sock, mbuf, sizeof(mbuf), 0);
+        //BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
+        if(!http_img.header_checked && (http_buf_len > 1024)) {
+            //Parse http response
+            http_parser_init(parser, HTTP_RESPONSE);
+            parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+            http_img.response_size = http_img.content_start - http_buf + http_img.content_size;
+            printf("response_size=%d content_size=%d\n", http_img.response_size, http_img.content_size);
+            http_img.header_checked = 1;
+        }
+    } while(mbuf_len > 0);
 
 
-	//Reparse http response, in case realloc change the http_buf address.
-	http_parser_init(parser, HTTP_RESPONSE);
-	parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+    //Reparse http response, in case realloc change the http_buf address.
+    http_parser_init(parser, HTTP_RESPONSE);
+    parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
 
-	//Checkout PNG body, and write to local file.
-	p = strtok(http_img.type, ";");
-	if(!strcmp(p, IMAGE_TYPE_PNG))
-		file_ext = IMAGE_TYPE_PNG_EXT;
-	else if(!strcmp(p, IMAGE_TYPE_JPEG))
-		file_ext = IMAGE_TYPE_JPEG_EXT;
-	else if(!strcmp(p, IMAGE_TYPE_GIF))
-		file_ext = IMAGE_TYPE_GIF_EXT;
-	else if(!strcmp(p, IMAGE_TYPE_BMP))
-		file_ext = IMAGE_TYPE_BMP_EXT;
-	else
-		file_ext = IMAGE_TYPE_DEFAULT_EXT;
-	strcat(outfile, file_ext);
-	printf("Content-Type=%s\n", outfile);
-	if((fp = fopen(outfile,"wra+"))==NULL)
-	{
-		printf("can't open abc.txt\n");
-	}
-	if(fp != NULL)
-		if(fwrite(http_img.content_start,sizeof(char),http_img.content_size,fp)!=http_img.content_size)
-			printf("can't write %s\n", outfile);
-	if(fp != NULL)
-		fclose(fp);
+    //Checkout PNG body, and write to local file.
+    p = strtok(http_img.type, ";");
+    if(!strcmp(p, IMAGE_TYPE_PNG))
+        file_ext = IMAGE_TYPE_PNG_EXT;
+    else if(!strcmp(p, IMAGE_TYPE_JPEG))
+        file_ext = IMAGE_TYPE_JPEG_EXT;
+    else if(!strcmp(p, IMAGE_TYPE_GIF))
+        file_ext = IMAGE_TYPE_GIF_EXT;
+    else if(!strcmp(p, IMAGE_TYPE_BMP))
+        file_ext = IMAGE_TYPE_BMP_EXT;
+    else
+        file_ext = IMAGE_TYPE_DEFAULT_EXT;
+    strcat(outfile, file_ext);
+    printf("Content-Type=%s\n", outfile);
+    if((fp = fopen(outfile, "wra+")) == NULL) {
+        printf("can't open abc.txt\n");
+    }
+    if(fp != NULL)
+        if(fwrite(http_img.content_start, sizeof(char), http_img.content_size, fp) != http_img.content_size)
+            printf("can't write %s\n", outfile);
+    if(fp != NULL)
+        fclose(fp);
 
-	//Free allocated buffer
-	if(http_buf)
-		free(http_buf);
-	if(mbuf)
-		free(mbuf);
-	if(parser)
-		free(parser);
+    //Free allocated buffer
+    if(http_buf)
+        free(http_buf);
+    if(mbuf)
+        free(mbuf);
+    if(parser)
+        free(parser);
 
-	return (EXIT_SUCCESS);
+    return (EXIT_SUCCESS);
 }
+#endif
 
-
+#if 1
 int s_k312_main(int argc, char **argv)
 {
     BIO *sbio;
@@ -2963,25 +3087,25 @@ int s_k312_main(int argc, char **argv)
     mbuf = app_malloc(BUFSIZZ, "mbuf");
 
     prog = opt_init(argc, argv, s_k312_options);
-    while ((o = opt_next()) != OPT_EOF) {
+    while((o = opt_next()) != OPT_EOF) {
         /* Check for intermixing flags. */
-        if (connect_type == use_unix && IS_INET_FLAG(o)) {
+        if(connect_type == use_unix && IS_INET_FLAG(o)) {
             BIO_printf(bio_err,
                        "%s: Intermixed protocol flags (unix and internet domains)\n",
                        prog);
             goto end;
         }
-        if (connect_type == use_inet && IS_UNIX_FLAG(o)) {
+        if(connect_type == use_inet && IS_UNIX_FLAG(o)) {
             BIO_printf(bio_err,
                        "%s: Intermixed protocol flags (internet and unix domains)\n",
                        prog);
             goto end;
         }
 
-        switch (o) {
+        switch(o) {
         case OPT_EOF:
         case OPT_ERR:
- opthelp:
+opthelp:
             BIO_printf(bio_err, "%s: Use -help for summary.\n", prog);
             goto end;
         case OPT_HELP:
@@ -2999,22 +3123,22 @@ int s_k312_main(int argc, char **argv)
         }
     }
     argc = opt_num_rest();
-    if (argc != 0)
+    if(argc != 0)
         goto opthelp;
 
-    if (proxystr) {
+    if(proxystr) {
         int res;
         char *tmp_host = host, *tmp_port = port;
-        if (connectstr == NULL) {
+        if(connectstr == NULL) {
             BIO_printf(bio_err, "%s: -proxy requires use of -connect\n", prog);
             goto opthelp;
         }
         res = BIO_parse_hostserv(proxystr, &host, &port, BIO_PARSE_PRIO_HOST);
-        if (tmp_host != host)
+        if(tmp_host != host)
             OPENSSL_free(tmp_host);
-        if (tmp_port != port)
+        if(tmp_port != port)
             OPENSSL_free(tmp_port);
-        if (!res) {
+        if(!res) {
             BIO_printf(bio_err,
                        "%s: -proxy argument malformed or ambiguous\n", prog);
             goto end;
@@ -3022,14 +3146,14 @@ int s_k312_main(int argc, char **argv)
     } else {
         int res = 1;
         char *tmp_host = host, *tmp_port = port;
-        if (connectstr != NULL)
+        if(connectstr != NULL)
             res = BIO_parse_hostserv(connectstr, &host, &port,
                                      BIO_PARSE_PRIO_HOST);
-        if (tmp_host != host)
+        if(tmp_host != host)
             OPENSSL_free(tmp_host);
-        if (tmp_port != port)
+        if(tmp_port != port)
             OPENSSL_free(tmp_port);
-        if (!res) {
+        if(!res) {
             BIO_printf(bio_err,
                        "%s: -connect argument malformed or ambiguous\n",
                        prog);
@@ -3037,154 +3161,151 @@ int s_k312_main(int argc, char **argv)
         }
     }
 
-	if (socket_family == AF_UNIX && socket_type != SOCK_STREAM) {
-		BIO_printf(bio_err, "Can't use unix sockets and datagrams together\n");
-		goto end;
-	}
+    if(socket_family == AF_UNIX && socket_type != SOCK_STREAM) {
+        BIO_printf(bio_err, "Can't use unix sockets and datagrams together\n");
+        goto end;
+    }
 
-	if (bio_c_out == NULL) {
-		if (c_quiet && !c_debug) {
-			bio_c_out = BIO_new(BIO_s_null());
-			if (c_msg && !bio_c_msg)
-				bio_c_msg = dup_bio_out(FORMAT_TEXT);
-		} else if (bio_c_out == NULL)
-			bio_c_out = dup_bio_out(FORMAT_TEXT);
-	}
+    if(bio_c_out == NULL) {
+        if(c_quiet && !c_debug) {
+            bio_c_out = BIO_new(BIO_s_null());
+            if(c_msg && !bio_c_msg)
+                bio_c_msg = dup_bio_out(FORMAT_TEXT);
+        } else if(bio_c_out == NULL)
+            bio_c_out = dup_bio_out(FORMAT_TEXT);
+    }
 
-	if (init_client(&s, host, port, socket_family, socket_type) == 0) {
-		BIO_printf(bio_err, "connect:errno=%d\n", get_last_socket_error());
-		BIO_closesocket(s);
-		goto end;
-	}
-	BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
+    if(init_client(&s, host, port, socket_family, socket_type) == 0) {
+        BIO_printf(bio_err, "connect:errno=%d\n", get_last_socket_error());
+        BIO_closesocket(s);
+        goto end;
+    }
+    BIO_printf(bio_c_out, "CONNECTED(%08X)\n", s);
 
-	sbio = BIO_new_socket(s, BIO_NOCLOSE);
+    sbio = BIO_new_socket(s, BIO_NOCLOSE);
 
-	//BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
-	struct timeval tmstart;
-	char outfile[20] = "logo";
-	char *file_ext;
-	FILE *fp;
+    //BIO_printf(bio_c_out, "@@@@@ starttls_proto=%d\n", starttls_proto);
+    struct timeval tmstart;
+    char outfile[20] = "logo";
+    char *file_ext;
+    FILE *fp;
 
-	gettimeofday(&tmstart, NULL);
+    gettimeofday(&tmstart, NULL);
 
-	{
-		enum {
-			error_proto,	 /* Wrong protocol, not even HTTP */
-			error_connect,	 /* CONNECT failed */
-			success
-		} foundit = error_connect;
-		BIO *fbio = BIO_new(BIO_f_buffer());
+    {
+        enum {
+            error_proto,	 /* Wrong protocol, not even HTTP */
+            error_connect,	 /* CONNECT failed */
+            success
+        } foundit = error_connect;
+        BIO *fbio = BIO_new(BIO_f_buffer());
 
-		/*PNG*/char *buf = "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
-		/*JPEG*///char *buf = "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
-		BIO_push(fbio, sbio);
-		BIO_printf(fbio, buf);
+        /*PNG*/char *buf = "GET http://admin.omsg.cn/uploadpic/2016121034000012.png HTTP/1.1\r\nHost: admin.omsg.cn\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+        /*JPEG*///char *buf = "GET http://pic67.nipic.com/file/20150515/19533051_112209270000_2.jpg HTTP/1.1\r\nHost: pic67.nipic.com\r\nAccept: */*\r\nConnection: Keep-Alive\r\n\r\n";
+        BIO_push(fbio, sbio);
+        BIO_printf(fbio, buf);
 
-		size_t parsed;
-		char *http_buf;
-		unsigned int http_buf_len = 0;
-		char *p;
+        size_t parsed;
+        char *http_buf;
+        unsigned int http_buf_len = 0;
+        char *p;
 
-		memset(&http_img, 0, sizeof(http_img));
+        memset(&http_img, 0, sizeof(http_img));
 
-		http_buf = malloc(BUFSIZZ);
+        http_buf = malloc(BUFSIZZ);
 
-	//Parse http request.
-		parser = malloc(sizeof(http_parser));
-		http_parser_init(parser, HTTP_REQUEST);
-		parsed = http_parser_execute(parser, &settings_null, buf, strlen(buf));
+        //Parse http request.
+        parser = malloc(sizeof(http_parser));
+        http_parser_init(parser, HTTP_REQUEST);
+        parsed = http_parser_execute(parser, &settings_null, buf, strlen(buf));
 
-		(void)BIO_flush(fbio);
-		/*
-		* The first line is the HTTP response.  According to RFC 7230,
-		* it's formated exactly like this:
-		*
-		* HTTP/d.d ddd Reason text\r\n
-		*/
-		mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-		BIO_printf(bio_c_out, "@@@@@ line=%d mbuf=%s\n", __LINE__, mbuf);
-		if (mbuf[8] != ' ') {
-			BIO_printf(bio_err,	"HTTP CONNECT failed, incorrect response from proxy\n");
-			foundit = error_proto;
-		} else if (mbuf[9] != '2') {
-			BIO_printf(bio_err, "HTTP CONNECT failed: %s ", mbuf[9]);
-		} else {
-			foundit = success;
-		}
+        (void) BIO_flush(fbio);
+        /*
+        * The first line is the HTTP response.  According to RFC 7230,
+        * it's formated exactly like this:
+        *
+        * HTTP/d.d ddd Reason text\r\n
+        */
+        mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+        BIO_printf(bio_c_out, "@@@@@ line=%d mbuf=%s\n", __LINE__, mbuf);
+        if(mbuf[8] != ' ') {
+            BIO_printf(bio_err,	"HTTP CONNECT failed, incorrect response from proxy\n");
+            foundit = error_proto;
+        } else if(mbuf[9] != '2') {
+            BIO_printf(bio_err, "HTTP CONNECT failed: %s ", mbuf[9]);
+        } else {
+            foundit = success;
+        }
 
 
-		if (foundit != error_proto) {
-			/* Read past all following headers */
-			do {
-				if((http_img.response_size>BUFSIZZ) && (!http_img.mem_realloced))
-				{
-				//Need more memory, realloc it.
-					http_buf = realloc(http_buf,http_img.response_size);
-					http_img.mem_realloced = 1;
-					printf("realloc memory size to %d\n", http_img.response_size);
-				}
-				memcpy(http_buf+http_buf_len, mbuf, mbuf_len);
-				http_buf_len += mbuf_len;
-				mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
-				//BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
+        if(foundit != error_proto) {
+            /* Read past all following headers */
+            do {
+                if((http_img.response_size > BUFSIZZ) && (!http_img.mem_realloced)) {
+                    //Need more memory, realloc it.
+                    http_buf = realloc(http_buf, http_img.response_size);
+                    http_img.mem_realloced = 1;
+                    printf("realloc memory size to %d\n", http_img.response_size);
+                }
+                memcpy(http_buf + http_buf_len, mbuf, mbuf_len);
+                http_buf_len += mbuf_len;
+                mbuf_len = BIO_gets(fbio, mbuf, BUFSIZZ);
+                //BIO_printf(bio_c_out, "@@@@@ line=%d mbuf_len=%d http_buf_len=%d png_len=%d time consumption=%lf\n", __LINE__, mbuf_len, http_buf_len, png_len, tminterval(tmstart));
 
-				if(!http_img.header_checked && (http_buf_len>1024))
-				{
-				//Parse http response
-					http_parser_init(parser, HTTP_RESPONSE);
-					parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
-					http_img.response_size = http_img.content_start - http_buf + http_img.content_size;
-					printf("response_size=%d content_size=%d\n", http_img.response_size, http_img.content_size);
-					http_img.header_checked =1;
-				}
-			} while (mbuf_len > 0);
-		}
+                if(!http_img.header_checked && (http_buf_len > 1024)) {
+                    //Parse http response
+                    http_parser_init(parser, HTTP_RESPONSE);
+                    parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+                    http_img.response_size = http_img.content_start - http_buf + http_img.content_size;
+                    printf("response_size=%d content_size=%d\n", http_img.response_size, http_img.content_size);
+                    http_img.header_checked = 1;
+                }
+            } while(mbuf_len > 0);
+        }
 
-	//Reparse http response, in case realloc change the http_buf address.
-		http_parser_init(parser, HTTP_RESPONSE);
-		parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
+        //Reparse http response, in case realloc change the http_buf address.
+        http_parser_init(parser, HTTP_RESPONSE);
+        parsed = http_parser_execute(parser, &settings_null, http_buf, strlen(http_buf));
 
-	//Checkout PNG body, and write to local file.
-		p = strtok(http_img.type, ";");
-		if(!strcmp(p, IMAGE_TYPE_PNG))
-			file_ext = IMAGE_TYPE_PNG_EXT;
-		else if(!strcmp(p, IMAGE_TYPE_JPEG))
-			file_ext = IMAGE_TYPE_JPEG_EXT;
-		else if(!strcmp(p, IMAGE_TYPE_GIF))
-			file_ext = IMAGE_TYPE_GIF_EXT;
-		else if(!strcmp(p, IMAGE_TYPE_BMP))
-			file_ext = IMAGE_TYPE_BMP_EXT;
-		else
-			file_ext = IMAGE_TYPE_DEFAULT_EXT;
-		strcat(outfile, file_ext);
-		printf("Content-Type=%s\n", outfile);
-		if((fp = fopen(outfile,"wra+"))==NULL)
-		{
-			printf("can't open abc.txt\n");
-		}
-		if(fp != NULL)
-			if(fwrite(http_img.content_start,sizeof(char),http_img.content_size,fp)!=http_img.content_size)
-				printf("can't write %s\n", outfile);
-		if(fp != NULL)
-			fclose(fp);
+        //Checkout PNG body, and write to local file.
+        p = strtok(http_img.type, ";");
+        if(!strcmp(p, IMAGE_TYPE_PNG))
+            file_ext = IMAGE_TYPE_PNG_EXT;
+        else if(!strcmp(p, IMAGE_TYPE_JPEG))
+            file_ext = IMAGE_TYPE_JPEG_EXT;
+        else if(!strcmp(p, IMAGE_TYPE_GIF))
+            file_ext = IMAGE_TYPE_GIF_EXT;
+        else if(!strcmp(p, IMAGE_TYPE_BMP))
+            file_ext = IMAGE_TYPE_BMP_EXT;
+        else
+            file_ext = IMAGE_TYPE_DEFAULT_EXT;
+        strcat(outfile, file_ext);
+        printf("Content-Type=%s\n", outfile);
+        if((fp = fopen(outfile, "wra+")) == NULL) {
+            printf("can't open abc.txt\n");
+        }
+        if(fp != NULL)
+            if(fwrite(http_img.content_start, sizeof(char), http_img.content_size, fp) != http_img.content_size)
+                printf("can't write %s\n", outfile);
+        if(fp != NULL)
+            fclose(fp);
 
-	//Free parser
-		if(parser)
-			free(parser);
-	//Free allocated buffer
-		if(http_buf)
-			free(http_buf);
+        //Free parser
+        if(parser)
+            free(parser);
+        //Free allocated buffer
+        if(http_buf)
+            free(http_buf);
 
-		(void)BIO_flush(fbio);
+        (void) BIO_flush(fbio);
 
-		BIO_pop(fbio);
-		BIO_free(fbio);
-	}
+        BIO_pop(fbio);
+        BIO_free(fbio);
+    }
 
     ret = 0;
 
- end:
+end:
     OPENSSL_free(connectstr);
     OPENSSL_free(host);
     OPENSSL_free(port);
@@ -3195,6 +3316,7 @@ int s_k312_main(int argc, char **argv)
     bio_c_msg = NULL;
     return (ret);
 }
+#endif
 
 static void print_stuff(BIO *bio, SSL *s, int full)
 {
