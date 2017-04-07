@@ -137,7 +137,6 @@ int ssl3_get_record(SSL *s)
     unsigned int max_recs;
     unsigned int j;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     rr = RECORD_LAYER_get_rrec(&s->rlayer);
     rbuf = RECORD_LAYER_get_rbuf(&s->rlayer);
     max_recs = s->max_pipelines;
@@ -573,7 +572,6 @@ int ssl3_enc(SSL *s, SSL3_RECORD *inrecs, unsigned int n_recs, int send)
     int bs, i, mac_size = 0;
     const EVP_CIPHER *enc;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     rec = inrecs;
     /*
      * We shouldn't ever be called with more than one record in the SSLv3 case
@@ -653,7 +651,6 @@ int tls1_enc(SSL *s, SSL3_RECORD *recs, unsigned int n_recs, int send)
     const EVP_CIPHER *enc;
     unsigned int ctr;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (send) {
         if (EVP_MD_CTX_md(s->write_hash)) {
             int n = EVP_MD_CTX_size(s->write_hash);
@@ -961,7 +958,6 @@ int tls1_mac(SSL *ssl, SSL3_RECORD *rec, unsigned char *md, int send)
                       : (ssl->mac_flags & SSL_MAC_FLAG_READ_MAC_STREAM));
     int t;
 
-printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (send) {
         seq = RECORD_LAYER_get_write_sequence(&ssl->rlayer);
         hash = ssl->write_hash;
@@ -1281,7 +1277,6 @@ int dtls1_process_record(SSL *s, DTLS1_BITMAP *bitmap)
     unsigned int mac_size;
     unsigned char md[EVP_MAX_MD_SIZE];
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     rr = RECORD_LAYER_get_rrec(&s->rlayer);
     sess = s->session;
 
@@ -1469,7 +1464,6 @@ int dtls1_get_record(SSL *s)
     DTLS1_BITMAP *bitmap;
     unsigned int is_next_epoch;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     rr = RECORD_LAYER_get_rrec(&s->rlayer);
 
  again:

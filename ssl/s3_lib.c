@@ -2778,7 +2778,6 @@ const SSL_CIPHER *ssl3_get_cipher(unsigned int u)
 
 int ssl3_set_handshake_header(SSL *s, int htype, unsigned long len)
 {
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     unsigned char *p = (unsigned char *)s->init_buf->data;
     *(p++) = htype;
     l2n3(len, p);
@@ -2790,7 +2789,6 @@ int ssl3_set_handshake_header(SSL *s, int htype, unsigned long len)
 
 int ssl3_handshake_write(SSL *s)
 {
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return ssl3_do_write(s, SSL3_RT_HANDSHAKE);
 }
 
@@ -3552,7 +3550,6 @@ const SSL_CIPHER *ssl3_get_cipher_by_char(const unsigned char *p)
     id = 0x03000000 | ((uint32_t)p[0] << 8L) | (uint32_t)p[1];
     c.id = id;
     cp = OBJ_bsearch_ssl_cipher_id(&c, ssl3_ciphers, SSL3_NUM_CIPHERS);
-	printf("@@@@@ %s line=%d cipher name=%s\n", __func__, __LINE__, cp->name);
     return cp;
 }
 
@@ -3560,7 +3557,6 @@ int ssl3_put_cipher_by_char(const SSL_CIPHER *c, unsigned char *p)
 {
     long l;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (p != NULL) {
         l = c->id;
         if ((l & 0xff000000) != 0x03000000)
@@ -3589,7 +3585,6 @@ const SSL_CIPHER *ssl3_choose_cipher(SSL *s, STACK_OF(SSL_CIPHER) *clnt,
 
     /* Let's see which ciphers we can support */
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
 #if 0
     /*
      * Do not set the compare functions, because this may lead to a
@@ -3820,7 +3815,6 @@ int ssl3_shutdown(SSL *s)
 
 int ssl3_write(SSL *s, const void *buf, int len)
 {
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     clear_sys_error();
     if (s->s3->renegotiate)
         ssl3_renegotiate_check(s);
@@ -3832,7 +3826,6 @@ static int ssl3_read_internal(SSL *s, void *buf, int len, int peek)
 {
     int ret;
 
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     clear_sys_error();
     if (s->s3->renegotiate)
         ssl3_renegotiate_check(s);
@@ -3861,7 +3854,6 @@ static int ssl3_read_internal(SSL *s, void *buf, int len, int peek)
 
 int ssl3_read(SSL *s, void *buf, int len)
 {
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return ssl3_read_internal(s, buf, len, 0);
 }
 

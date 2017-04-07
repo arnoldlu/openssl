@@ -1523,7 +1523,6 @@ static int aes_gcm_tls_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
     EVP_AES_GCM_CTX *gctx = EVP_C_DATA(EVP_AES_GCM_CTX,ctx);
     int rv = -1;
     /* Encrypt/decrypt must be performed in place */
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     if (out != in
         || len < (EVP_GCM_TLS_EXPLICIT_IV_LEN + EVP_GCM_TLS_TAG_LEN))
         return -1;
@@ -1544,7 +1543,6 @@ static int aes_gcm_tls_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
     out += EVP_GCM_TLS_EXPLICIT_IV_LEN;
     len -= EVP_GCM_TLS_EXPLICIT_IV_LEN + EVP_GCM_TLS_TAG_LEN;
     if (EVP_CIPHER_CTX_encrypting(ctx)) {
-		printf("@@@@@ %s line=%d  Encrypt payload\n", __func__, __LINE__);
         /* Encrypt payload */
         if (gctx->ctr) {
             size_t bulk = 0;
@@ -1586,7 +1584,6 @@ static int aes_gcm_tls_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
         CRYPTO_gcm128_tag(&gctx->gcm, out, EVP_GCM_TLS_TAG_LEN);
         rv = len + EVP_GCM_TLS_EXPLICIT_IV_LEN + EVP_GCM_TLS_TAG_LEN;
     } else {
-		printf("@@@@@ %s line=%d  Decrypt payload\n", __func__, __LINE__);
         /* Decrypt */
         if (gctx->ctr) {
             size_t bulk = 0;
@@ -1646,10 +1643,6 @@ static int aes_gcm_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
 {
     EVP_AES_GCM_CTX *gctx = EVP_C_DATA(EVP_AES_GCM_CTX,ctx);
     /* If not set up, return error */
-//if(out != NULL)
-//	printf("@@@@@ %s line=%d out=%s key_set=%d tls_aad_len=%d\n", __func__, __LINE__, out, gctx->key_set, gctx->tls_aad_len);
-//if(in != NULL)
-//	printf("@@@@@ %s line=%d in=%s\n", __func__, __LINE__, in);
     if (!gctx->key_set)
         return -1;
 

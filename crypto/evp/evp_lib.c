@@ -180,13 +180,11 @@ int EVP_CIPHER_impl_ctx_size(const EVP_CIPHER *e)
 int EVP_Cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
                const unsigned char *in, unsigned int inl)
 {
-	printf("@@@@@ %s line=%d\n", __func__, __LINE__);
     return ctx->cipher->do_cipher(ctx, out, in, inl);
 }
 
 const EVP_CIPHER *EVP_CIPHER_CTX_cipher(const EVP_CIPHER_CTX *ctx)
 {
-	printf("@@@@@ %s line=%d cipher name=%s\n", __func__, __LINE__, OBJ_nid2ln(ctx->cipher->nid));
     return ctx->cipher;
 }
 
